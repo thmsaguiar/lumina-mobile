@@ -6,12 +6,10 @@ type FooterProps = {
   selectedStep: number;
 };
 
-export default function Footer({
+export default function OpeningFooter({
   message,
   selectedStep,
 }: Readonly<FooterProps>) {
-
-
   return (
     <View style={styles.footer}>
       <View style={styles.progressBar}>

@@ -10,9 +10,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  View,
 } from "react-native";
 import { useState, useRef } from "react";
-import Footer from "../components/Footer";
+import OpeningFooter from "../components/OpeningFooter";
 import { useFonts } from "expo-font";
 import {
   Inter_400Regular,
@@ -20,6 +21,10 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
+import {
+  PlaypenSans_400Regular,
+  PlaypenSans_600SemiBold,
+} from "@expo-google-fonts/playpen-sans";
 import { router } from "expo-router";
 
 type StepKey = 1 | 2 | 3;
@@ -60,6 +65,8 @@ export default function Opening() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    PlaypenSans_400Regular,
+    PlaypenSans_600SemiBold,
   });
   if (!fontsLoaded) return null;
 
@@ -169,7 +176,7 @@ export default function Opening() {
               </>
             )}
           </Animated.View>
-          <Footer message={message} selectedStep={currentStep} />
+          <OpeningFooter message={message} selectedStep={currentStep} />
         </ScrollView>
       </KeyboardAvoidingView>
     </Pressable>
@@ -177,6 +184,12 @@ export default function Opening() {
 }
 
 const styles = StyleSheet.create({
+  apptitle: {
+    color: "#2F4253",
+    fontFamily: "PlaypenSans_600SemiBold",
+    fontSize: 28,
+    textTransform: "uppercase",
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "#FAFAFA",
