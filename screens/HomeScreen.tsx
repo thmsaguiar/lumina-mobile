@@ -41,9 +41,9 @@ export default function HomeScreen({
   const [listModalVisible, setListModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<TaskList | null>(null);
 
-  const focusList = focusMode
-    ? lists.find((l) => l.tasks.some((t) => !t.completed)) || null
-    : null;
+  const focusLists = focusMode
+    ? lists.filter((l) => l.tasks.some((t) => !t.completed))
+    : [];
 
   const openAddTask = (listId: string) => {
     setActiveListId(listId);
@@ -92,13 +92,13 @@ export default function HomeScreen({
   };
 
   const renderLists = () => {
-    const targetLists = focusMode && focusList ? [focusList] : lists;
+    const targetLists = focusMode ? focusLists : lists;
 
     if (targetLists.length === 0) {
       return (
         <Box flex={1} alignItems="center" justifyContent="center" py="$16">
           <Text fontSize="$4xl" mb="$4">
-            📋
+            {focusMode ? "🎉" : "📋"}
           </Text>
           <Text
             fontSize="$md"
@@ -106,10 +106,12 @@ export default function HomeScreen({
             color="$textLight600"
             textAlign="center"
           >
-            Nenhuma lista ainda
+            {focusMode ? "Nenhuma tarefa em aberto!" : "Nenhuma lista ainda"}
           </Text>
           <Text fontSize="$sm" color="$textLight400" textAlign="center" mt="$1">
-            Crie sua primeira lista para começar
+            {focusMode
+              ? "Todas as suas tarefas estão concluídas."
+              : "Crie sua primeira lista para começar"}
           </Text>
         </Box>
       );
@@ -176,6 +178,7 @@ export default function HomeScreen({
           </Box>
         )}
 
+        {/* Cabeçalho da página */}
         {!focusMode && (
           <HStack
             justifyContent="space-between"
@@ -195,9 +198,21 @@ export default function HomeScreen({
                 Visualize e acompanhe suas atividades de forma organizada.
               </Text>
             </VStack>
+
+            <Button
+              size="sm"
+              borderRadius="$xl"
+              bg="$primary600"
+              onPress={() => openAddTask(lists[0]?.id)}
+              isDisabled={lists.length === 0}
+            >
+              <ButtonIcon as={Plus} mr="$1" />
+              <ButtonText fontSize="$xs">Nova atividade</ButtonText>
+            </Button>
           </HStack>
         )}
 
+        {/* Botão adicionar lista */}
         {!focusMode && (
           <Pressable
             onPress={openAddList}
@@ -225,9 +240,11 @@ export default function HomeScreen({
           </Pressable>
         )}
 
+        {/* Listas */}
         {renderLists()}
       </ScrollView>
 
+      {/* Modais */}
       <TaskModal
         visible={taskModalVisible}
         lists={lists}
