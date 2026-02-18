@@ -198,17 +198,6 @@ export default function HomeScreen({
                 Visualize e acompanhe suas atividades de forma organizada.
               </Text>
             </VStack>
-
-            <Button
-              size="sm"
-              borderRadius="$xl"
-              bg="$primary600"
-              onPress={() => openAddTask(lists[0]?.id)}
-              isDisabled={lists.length === 0}
-            >
-              <ButtonIcon as={Plus} mr="$1" />
-              <ButtonText fontSize="$xs">Nova atividade</ButtonText>
-            </Button>
           </HStack>
         )}
 
