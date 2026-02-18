@@ -1,13 +1,43 @@
-import { Redirect } from "expo-router";
-import { useFirstAccess } from "../hooks/useFirstAccess";
+import { BoardProvider } from "@context/BoardContext";
+import { config } from "@gluestack-ui/config";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
+import HomeScreen from "@screens/HomeScreen";
+import OnboardingScreen from "@screens/OnboardingScreen";
+import React, { useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-export default function Index() {
-  //const { isFirstAccess } = useFirstAccess();
-  const isFirstAccess = true;
 
-  if (isFirstAccess) {
-    return <Redirect href="/opening" />;
-  }
+type Screen = "onboarding" | "home";
 
-  return <Redirect href="/home" />;
+export default function App() {
+  const [screen, setScreen] = useState<Screen>("onboarding");
+  const [currentTask, setCurrentTask] = useState<string | undefined>(undefined);
+
+  const handleOnboardingComplete = (task?: string) => {
+    setCurrentTask(task);
+    setScreen("home");
+  };
+
+  const handleOpenSettings = () => {
+    // TODO: navegar para SettingsScreen
+    console.log("Settings");
+  };
+
+  return (
+    <SafeAreaProvider>
+      <GluestackUIProvider config={config}>
+        <BoardProvider>
+          {screen === "onboarding" ? (
+            <OnboardingScreen onComplete={handleOnboardingComplete} />
+          ) : (
+            <HomeScreen
+              currentTask={currentTask}
+              onOpenSettings={handleOpenSettings}
+              pomodoroEnabled
+            />
+          )}
+        </BoardProvider>
+      </GluestackUIProvider>
+    </SafeAreaProvider>
+  );
 }
