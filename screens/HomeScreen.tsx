@@ -226,17 +226,6 @@ export default function HomeScreen({
         )}
 
         {renderLists()}
-
-        <Text
-          textAlign="center"
-          fontSize="$xs"
-          fontWeight="$bold"
-          color="$textLight400"
-          letterSpacing="$lg"
-          mt="$4"
-        >
-          Seu progresso começa agora!
-        </Text>
       </ScrollView>
 
       <TaskModal
