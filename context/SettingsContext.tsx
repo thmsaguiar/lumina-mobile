@@ -85,7 +85,6 @@ export const SettingsProvider = ({ children }: Props) => {
   // Atualiza parcialmente
   const updateSettings = useCallback(
     async (newSettings: Partial<Settings>) => {
-      console.log(newSettings);
       setSettings((prev) => {
         const updated = { ...prev, ...newSettings };
         AsyncStorage.setItem("settings", JSON.stringify(updated));

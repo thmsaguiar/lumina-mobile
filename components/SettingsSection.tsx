@@ -20,6 +20,7 @@ export default function SettingsSection({
   return (
     <>
       {/* Cabeçalho da seção */}
+      <VStack mb="$5">
       <HStack justifyContent="space-between" alignItems="flex-start" mb="$5">
         <VStack flex={1} mr="$3">
           <Text
@@ -36,6 +37,7 @@ export default function SettingsSection({
         </VStack>
       </HStack>
       {content}
+      </VStack>
     </>
   );
 }

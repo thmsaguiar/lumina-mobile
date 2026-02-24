@@ -37,7 +37,7 @@ export default function SettingsOption<T extends string | null | undefined = str
   const isToggle = variant === "toggle";
 
   return (
-    <HStack justifyContent="space-between" alignItems="center" mb="$5">
+    <HStack justifyContent="space-between" alignItems="center" mb="$2">
       <VStack flex={1} mr="$3">
         <Text fontSize="$md" color="$textLight900">
           {title}
