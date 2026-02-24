@@ -2,12 +2,13 @@ import { BoardProvider } from "@context/BoardContext";
 import { config } from "@gluestack-ui/config";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import HomeScreen from "@screens/HomeScreen";
+import SettingsScreen from "@screens/SettingsScreen";
 import OnboardingScreen from "@screens/OnboardingScreen";
 import React, { useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SettingsProvider } from "@context/SettingsContext";
 
-
-type Screen = "onboarding" | "home";
+type Screen = "onboarding" | "home" | "settings";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("onboarding");
@@ -19,24 +20,34 @@ export default function App() {
   };
 
   const handleOpenSettings = () => {
-    // TODO: navegar para SettingsScreen
-    console.log("Settings");
+    setScreen("settings");
+  };
+
+  const renderScreen = () => {
+    switch (screen) {
+      case "onboarding":
+        return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+
+      case "settings":
+        return <SettingsScreen handleClose={() => setScreen("home")} />;
+
+      case "home":
+        return (
+          <HomeScreen
+            currentTask={currentTask}
+            onOpenSettings={handleOpenSettings}
+            pomodoroEnabled
+          />
+        );
+    }
   };
 
   return (
     <SafeAreaProvider>
       <GluestackUIProvider config={config}>
-        <BoardProvider>
-          {screen === "onboarding" ? (
-            <OnboardingScreen onComplete={handleOnboardingComplete} />
-          ) : (
-            <HomeScreen
-              currentTask={currentTask}
-              onOpenSettings={handleOpenSettings}
-              pomodoroEnabled
-            />
-          )}
-        </BoardProvider>
+        <SettingsProvider>
+          <BoardProvider>{renderScreen()}</BoardProvider>
+        </SettingsProvider>
       </GluestackUIProvider>
     </SafeAreaProvider>
   );

@@ -140,6 +140,7 @@ export default function HomeScreen({
         onToggleFocus={() => setFocusMode((f) => !f)}
         pomodoroEnabled={pomodoroEnabled}
         onOpenSettings={onOpenSettings}
+        focusEnabled={true}
       />
 
       <ScrollView

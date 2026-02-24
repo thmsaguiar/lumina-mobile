@@ -1,10 +1,4 @@
-import {
-  Box,
-  HStack,
-  Icon,
-  Pressable,
-  Text,
-} from "@gluestack-ui/themed";
+import { Box, HStack, Icon, Pressable, Text } from "@gluestack-ui/themed";
 import { Settings } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -12,7 +6,8 @@ const POMODORO_DURATION = 25 * 60;
 
 interface AppHeaderProps {
   focusMode: boolean;
-  onToggleFocus: () => void;
+  focusEnabled?: boolean;
+  onToggleFocus?: () => void;
   pomodoroEnabled: boolean;
   onOpenSettings: () => void;
 }
@@ -21,6 +16,7 @@ export default function AppHeader({
   focusMode,
   onToggleFocus,
   pomodoroEnabled,
+  focusEnabled,
   onOpenSettings,
 }: AppHeaderProps) {
   const [seconds, setSeconds] = useState(POMODORO_DURATION);
@@ -54,7 +50,13 @@ export default function AppHeader({
   };
 
   return (
-    <Box bg="$backgroundLight100" px="$4" py="$2" borderBottomWidth={1} borderBottomColor="$borderLight200">
+    <Box
+      bg="$backgroundLight100"
+      px="$4"
+      py="$2"
+      borderBottomWidth={1}
+      borderBottomColor="$borderLight200"
+    >
       <HStack alignItems="center" justifyContent="space-between">
         {/* Logo */}
         <Text fontSize={28}>🌞</Text>
@@ -89,30 +91,32 @@ export default function AppHeader({
           )}
 
           {/* Modo foco */}
-          <Pressable
-            onPress={onToggleFocus}
-            bg="$white"
-            borderRadius="$full"
-            px="$3"
-            py="$1.5"
-            borderWidth={1}
-            borderColor="$borderLight200"
-            $pressed={{ opacity: 0.7 }}
-          >
-            <HStack space="xs" alignItems="center">
-              <Text fontSize="$xs" color="$textLight600">
-                Modo foco:{" "}
-              </Text>
-              <Text
-                fontSize="$xs"
-                fontWeight="$bold"
-                color={focusMode ? "$success600" : "$error500"}
-              >
-                {focusMode ? "ativado" : "desativado"}
-              </Text>
-            </HStack>
-          </Pressable>
-
+          {focusEnabled && (
+            <Pressable
+              onPress={onToggleFocus}
+              bg="$white"
+              borderRadius="$full"
+              px="$3"
+              py="$1.5"
+              borderWidth={1}
+              borderColor="$borderLight200"
+              $pressed={{ opacity: 0.7 }}
+            >
+              <HStack space="xs" alignItems="center">
+                <Text fontSize="$xs" color="$textLight600">
+                  Modo foco:{" "}
+                </Text>
+                <Text
+                  fontSize="$xs"
+                  fontWeight="$bold"
+                  color={focusMode ? "$success600" : "$error500"}
+                >
+                  {focusMode ? "ativado" : "desativado"}
+                </Text>
+              </HStack>
+            </Pressable>
+          )}
+          
           {/* Settings */}
           <Pressable
             onPress={onOpenSettings}
