@@ -1,6 +1,7 @@
 import { Box, HStack, Icon, Pressable, Text } from "@gluestack-ui/themed";
 import { Settings } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
+import { useSettings } from "@hooks/useSettings";
 
 const POMODORO_DURATION = 25 * 60;
 
@@ -22,6 +23,7 @@ export default function AppHeader({
   const [seconds, setSeconds] = useState(POMODORO_DURATION);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { settings } = useSettings(); // Hook de configurações
 
   useEffect(() => {
     if (running) {
@@ -63,7 +65,7 @@ export default function AppHeader({
 
         <HStack space="sm" alignItems="center">
           {/* Pomodoro */}
-          {pomodoroEnabled && (
+          {(pomodoroEnabled && settings.productivity.pomodoroEnabled) && (
             <Pressable
               onPress={() => setRunning((r) => !r)}
               bg="$white"
@@ -91,7 +93,7 @@ export default function AppHeader({
           )}
 
           {/* Modo foco */}
-          {focusEnabled && (
+          {(focusEnabled && settings.productivity.focusMode) && (
             <Pressable
               onPress={onToggleFocus}
               bg="$white"

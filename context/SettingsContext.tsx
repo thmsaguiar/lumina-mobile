@@ -54,8 +54,8 @@ const defaultSettings: Settings = {
     guidedSteps: false,
   },
   productivity: {
-    focusMode: false,
-    pomodoroEnabled: false,
+    focusMode: true,
+    pomodoroEnabled: true,
   },
 };
 
