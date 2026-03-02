@@ -12,15 +12,14 @@ export type FontSizeOption = "small" | "medium" | "large";
 
 export type Settings = {
   cognitiveModes: {
-    focus: boolean;
     clearReading: boolean;
-    sensorySensitivity: boolean;
     lowAttention: boolean;
   };
   visual: {
     fontSize: FontSizeOption;
-    visualAlerts: boolean;
+    darkMode: boolean;
     guidedSteps: boolean;
+    highContrast: boolean;
   };
   productivity: {
     focusMode: boolean;
@@ -43,15 +42,14 @@ export const FONT_SIZE_OPTIONS: { label: string; value: FontSizeOption }[] = [
 // Configurações padrões
 const defaultSettings: Settings = {
   cognitiveModes: {
-    focus: false,
     clearReading: false,
-    sensorySensitivity: false,
     lowAttention: false,
   },
   visual: {
     fontSize: "medium",
-    visualAlerts: false,
+    darkMode: false,
     guidedSteps: false,
+    highContrast: false,
   },
   productivity: {
     focusMode: true,

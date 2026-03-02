@@ -52,25 +52,9 @@ export default function SettingsScreen({
                 content={
                   <>
                     <SettingsOption
-                      title={"Foco"}
-                      subtitle={
-                        "Modo tarefa única, notificações bloqueadas, destaque visual e lembretes objetivos."
-                      }
-                      variant="toggle"
-                      value={settings.cognitiveModes.focus}
-                      onChange={(val) =>
-                        updateSettings({
-                          cognitiveModes: {
-                            ...settings.cognitiveModes,
-                            focus: val as boolean,
-                          },
-                        })
-                      }
-                    />
-                    <SettingsOption
                       title={"Leitura Clara"}
                       subtitle={
-                        "Indicação de progresso, confirmação antes de ações críticas e  passos numerados."
+                        "Esconde distrações e simplifica a interface."
                       }
                       variant="toggle"
                       value={settings.cognitiveModes.clearReading}
@@ -79,20 +63,6 @@ export default function SettingsScreen({
                           cognitiveModes: {
                             ...settings.cognitiveModes,
                             clearReading: val as boolean,
-                          },
-                        })
-                      }
-                    />
-                    <SettingsOption
-                      title={"Sensibilidade Sensorial"}
-                      subtitle={"Modo escuro suave e sem flashes ou efeitos."}
-                      variant="toggle"
-                      value={settings.cognitiveModes.sensorySensitivity}
-                      onChange={(val) =>
-                        updateSettings({
-                          cognitiveModes: {
-                            ...settings.cognitiveModes,
-                            sensorySensitivity: val as boolean,
                           },
                         })
                       }
@@ -144,17 +114,33 @@ export default function SettingsScreen({
                       }))}
                     />
                     <SettingsOption
-                      title={"Alertas visuais"}
+                      title={"Modo Escuro"}
                       subtitle={
-                        "Com essa opção ativa, você receberá alertas visuais em vez de sonoros, facilitando a percepção de notificações mesmo em ambientes silenciosos."
+                        "Minimiza o cansaço visual ao suavizar o brilho da tela, especialmente durante o uso prolongado."
                       }
                       variant="toggle"
-                      value={settings.visual.visualAlerts}
+                      value={settings.visual.darkMode}
                       onChange={(val) =>
                         updateSettings({
                           visual: {
                             ...settings.visual,
-                            visualAlerts: val as boolean,
+                            darkMode: val as boolean,
+                          },
+                        })
+                      }
+                    />
+                    <SettingsOption
+                      title={"Alto Contraste"}
+                      subtitle={
+                        "Amplia a diferença entre cores e textos, facilitando a leitura e a identificação de elementos."
+                      }
+                      variant="toggle"
+                      value={settings.visual.highContrast}
+                      onChange={(val) =>
+                        updateSettings({
+                          visual: {
+                            ...settings.visual,
+                            highContrast: val as boolean,
                           },
                         })
                       }
@@ -162,7 +148,7 @@ export default function SettingsScreen({
                     <SettingsOption
                       title={"Passos guiados"}
                       subtitle={
-                        "Ao ativar essa opção, serão apresentados passo a passo, ajudando você a entender melhor cada ação dentro do site evitando confusões durante o uso."
+                        "Ao ativar essa opção, serão apresentados dicas, ajudando você a entender melhor cada ação dentro do app."
                       }
                       variant="toggle"
                       value={settings.visual.guidedSteps}
