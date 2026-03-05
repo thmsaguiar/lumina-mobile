@@ -201,6 +201,18 @@ git commit -m "feat: adiciona timer pomodoro com play/pause no header"
 
 ---
 
+## 🔄 CI/CD
+
+O projeto possui um pipeline de integração contínua configurado com **GitHub Actions** (`.github/workflows/ci.yml`). O pipeline é executado automaticamente em pull requests e pushes para as branches `main` e `develop`, garantindo a qualidade do código através de:
+
+- **Type Check** — Validação de tipos com TypeScript
+- **Lint** — Análise estática de código com ESLint
+- **Testes** — Execução automática da suíte de testes
+
+Isso garante que todas as alterações sejam verificadas antes de serem integradas ao projeto.
+
+---
+
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
