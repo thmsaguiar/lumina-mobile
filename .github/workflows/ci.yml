@@ -1,4 +1,4 @@
-name: ✅ CI — Lint & Type Check
+name: ✅ CI — Lint, Type Check & Tests
 
 on:
   pull_request:
@@ -11,9 +11,11 @@ on:
       - develop
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & Type Check
+  lint-typecheck-test:
+    name: Lint, Type Check & Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: 📥 Checkout code
@@ -29,4 +31,10 @@ jobs:
         run: npm ci
 
       - name: 🔍 TypeScript type check
-        run: npx tsc --noEmit
+        run: npm run typecheck
+
+      - name: 🧹 ESLint
+        run: npm run lint
+
+      - name: 🧪 Tests
+        run: npm run test

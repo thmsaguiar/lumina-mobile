@@ -1,0 +1,38 @@
+name: 🚀 CD — EAS Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  eas-build:
+    name: EAS Build (Android & iOS Preview)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 🏗️ EAS Build (Android - Preview)
+        run: eas build --platform android --profile preview --non-interactive
+
+      - name: 🏗️ EAS Build (iOS - Preview)
+        run: eas build --platform ios --profile preview --non-interactive
