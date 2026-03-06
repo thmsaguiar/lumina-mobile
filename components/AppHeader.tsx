@@ -51,6 +51,14 @@ export default function AppHeader({
     paddingVertical: 6,
   };
 
+  const focusStatusColor = isHighContrast
+    ? focusMode
+      ? "#00FF00"
+      : "#FF4444"
+    : focusMode
+      ? "#16a34a"
+      : "#dc2626";
+
   return (
     <Box
       px="$4"
@@ -101,20 +109,7 @@ export default function AppHeader({
                 <Text
                   fontSize="$xs"
                   fontWeight="$bold"
-                  style={{
-                    color: isHighContrast
-                      ? focusMode
-                        ? "#00FF00"
-                        : "#FF4444"
-                      : undefined,
-                  }}
-                  color={
-                    !isHighContrast
-                      ? focusMode
-                        ? "$success600"
-                        : "$error500"
-                      : undefined
-                  }
+                  style={{ color: focusStatusColor }}
                 >
                   {focusMode ? "ativado" : "desativado"}
                 </Text>

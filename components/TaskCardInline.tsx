@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useClearReading } from "@hooks/useClearReading";
 
 import React from "react";
 
@@ -28,6 +29,7 @@ export function TaskCardInline({
     Edit2,
     Trash2,
   } = require("lucide-react-native");
+  const { isClearReading } = useClearReading();
 
   return (
     <Box
@@ -59,7 +61,8 @@ export function TaskCardInline({
           >
             {task.title}
           </Text>
-          {task.description ? (
+         
+          {!isClearReading && task.description ? (
             <Text
               fontSize="$xs"
               color={task.completed ? "$textLight300" : "$textLight500"}
