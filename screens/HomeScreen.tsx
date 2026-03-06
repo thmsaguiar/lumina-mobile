@@ -4,18 +4,15 @@ import ListModal from "@components/ListModal";
 import TaskModal from "@components/TaskModal";
 import type { Task, TaskList } from "@context/BoardContext";
 import { useBoard } from "@context/BoardContext";
+import { useThemeColors } from "@hooks/useThemeColors";
 import {
   Box,
-  Button,
-  ButtonIcon,
-  ButtonText,
   HStack,
   Pressable,
   ScrollView,
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import { Plus } from "lucide-react-native";
 import React, { useState } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -32,12 +29,13 @@ export default function HomeScreen({
   pomodoroEnabled = true,
 }: HomeScreenProps) {
   const { lists, addTask, editTask, addList, editList } = useBoard();
-  const [focusMode, setFocusMode] = useState(false);
+  const { isDark, screenBg, statusBarStyle, textPrimary, textSecondary } =
+    useThemeColors();
 
+  const [focusMode, setFocusMode] = useState(false);
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeListId, setActiveListId] = useState<string>("");
-
   const [listModalVisible, setListModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<TaskList | null>(null);
 
@@ -103,12 +101,17 @@ export default function HomeScreen({
           <Text
             fontSize="$md"
             fontWeight="$semibold"
-            color="$textLight600"
             textAlign="center"
+            style={{ color: textSecondary }}
           >
             {focusMode ? "Nenhuma tarefa em aberto!" : "Nenhuma lista ainda"}
           </Text>
-          <Text fontSize="$sm" color="$textLight400" textAlign="center" mt="$1">
+          <Text
+            fontSize="$sm"
+            textAlign="center"
+            mt="$1"
+            style={{ color: textSecondary }}
+          >
             {focusMode
               ? "Todas as suas tarefas estão concluídas."
               : "Crie sua primeira lista para começar"}
@@ -130,10 +133,10 @@ export default function HomeScreen({
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#F2F2F2" }}
+      style={{ flex: 1, backgroundColor: screenBg }}
       edges={["top"]}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+      <StatusBar barStyle={statusBarStyle} backgroundColor={screenBg} />
 
       <AppHeader
         focusMode={focusMode}
@@ -148,6 +151,7 @@ export default function HomeScreen({
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Banner foco atual */}
         {!focusMode && currentTask && (
           <Box
             mb="$4"
@@ -155,22 +159,26 @@ export default function HomeScreen({
             px="$4"
             py="$3"
             style={{
-              backgroundColor: "#EDE7F6",
+              backgroundColor: isDark ? "#2D2541" : "#EDE7F6",
               borderWidth: 1.5,
-              borderColor: "#B39DDB",
+              borderColor: isDark ? "#6B4FA0" : "#B39DDB",
             }}
           >
             <HStack space="sm" alignItems="center">
               <Text fontSize="$lg">🎯</Text>
               <VStack flex={1}>
-                <Text fontSize="$xs" color="$textLight500" fontWeight="$medium">
+                <Text
+                  fontSize="$xs"
+                  fontWeight="$medium"
+                  style={{ color: textSecondary }}
+                >
                   Foco atual
                 </Text>
                 <Text
                   fontSize="$sm"
                   fontWeight="$bold"
-                  style={{ color: "#4A2D8A" }}
                   numberOfLines={2}
+                  style={{ color: isDark ? "#C5A8FF" : "#4A2D8A" }}
                 >
                   {currentTask}
                 </Text>
@@ -179,7 +187,7 @@ export default function HomeScreen({
           </Box>
         )}
 
-        {/* Cabeçalho da página */}
+        {/* Cabeçalho */}
         {!focusMode && (
           <HStack
             justifyContent="space-between"
@@ -190,12 +198,16 @@ export default function HomeScreen({
               <Text
                 fontSize="$xl"
                 fontWeight="$bold"
-                color="$textLight900"
                 mb="$0.5"
+                style={{ color: textPrimary }}
               >
                 Quadro de atividades
               </Text>
-              <Text fontSize="$xs" color="$textLight500" lineHeight="$sm">
+              <Text
+                fontSize="$xs"
+                lineHeight="$sm"
+                style={{ color: textSecondary }}
+              >
                 Visualize e acompanhe suas atividades de forma organizada.
               </Text>
             </VStack>
@@ -210,31 +222,29 @@ export default function HomeScreen({
             py="$4"
             alignItems="center"
             mb="$3"
-            borderWidth={2}
-            borderColor="#6FA8DC"
-            style={{ borderStyle: "dashed", backgroundColor: "#EAF3FB" }}
             $pressed={{ opacity: 0.75 }}
+            style={{
+              borderStyle: "dashed",
+              borderWidth: 2,
+              backgroundColor: isDark ? "#1E2A35" : "#EAF3FB",
+              borderColor: isDark ? "#4A7FA8" : "#6FA8DC",
+            }}
           >
             <HStack space="xs" alignItems="center">
-              <Text fontSize="$md" style={{ color: "#3A7CB8" }}>
-                +
-              </Text>
               <Text
-                fontSize="$sm"
+                fontSize="$md"
                 fontWeight="$bold"
-                style={{ color: "#3A7CB8" }}
+                style={{ color: isDark ? "#7BB8E0" : "#3A7CB8" }}
               >
-                Adicionar lista
+                + Adicionar lista
               </Text>
             </HStack>
           </Pressable>
         )}
 
-        {/* Listas */}
         {renderLists()}
       </ScrollView>
 
-      {/* Modais */}
       <TaskModal
         visible={taskModalVisible}
         lists={lists}

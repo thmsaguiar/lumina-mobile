@@ -114,7 +114,7 @@ export default function TaskModal({
                     <FormControlLabelText
                       fontSize="$sm"
                       fontWeight="$semibold"
-                      color="$textLight800"
+                      color="$textLight600"
                     >
                       Título
                     </FormControlLabelText>
@@ -122,9 +122,11 @@ export default function TaskModal({
                   <Input bg="$backgroundLight100" borderRadius="$xl">
                     <InputField
                       placeholder="Informe o título da sua atividade"
+                      placeholderTextColor="#AAAAAA"
                       value={title}
                       onChangeText={setTitle}
                       fontSize="$sm"
+                      style={{ color: "#1A1A1A" }}
                     />
                   </Input>
                 </FormControl>
@@ -135,7 +137,7 @@ export default function TaskModal({
                     <FormControlLabelText
                       fontSize="$sm"
                       fontWeight="$semibold"
-                      color="$textLight800"
+                      color="$textLight600"
                     >
                       Descrição
                     </FormControlLabelText>
@@ -143,9 +145,11 @@ export default function TaskModal({
                   <Textarea bg="$backgroundLight100" borderRadius="$xl" h={90}>
                     <TextareaInput
                       placeholder="Adicione detalhes da atividade"
+                      placeholderTextColor="#AAAAAA"
                       value={description}
                       onChangeText={setDescription}
                       fontSize="$sm"
+                      style={{ color: "#1A1A1A" }}
                     />
                   </Textarea>
                 </FormControl>
@@ -156,7 +160,7 @@ export default function TaskModal({
                     <FormControlLabelText
                       fontSize="$sm"
                       fontWeight="$semibold"
-                      color="$textLight800"
+                      color="$textLight600"
                     >
                       Lista de atividades
                     </FormControlLabelText>

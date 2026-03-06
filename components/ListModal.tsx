@@ -101,7 +101,7 @@ export default function ListModal({
                 <FormControlLabelText
                   fontSize="$sm"
                   fontWeight="$semibold"
-                  color="$textLight800"
+                  color="$textLight600"
                 >
                   Título
                 </FormControlLabelText>
@@ -109,9 +109,11 @@ export default function ListModal({
               <Input bg="$backgroundLight100" borderRadius="$xl">
                 <InputField
                   placeholder="Informe o título da lista"
+                  placeholderTextColor="#AAAAAA"
                   value={title}
                   onChangeText={setTitle}
                   fontSize="$sm"
+                  style={{ color: "#1A1A1A" }}
                 />
               </Input>
             </FormControl>
@@ -122,7 +124,7 @@ export default function ListModal({
                 <FormControlLabelText
                   fontSize="$sm"
                   fontWeight="$semibold"
-                  color="$textLight800"
+                  color="$textLight600"
                 >
                   Cor
                 </FormControlLabelText>

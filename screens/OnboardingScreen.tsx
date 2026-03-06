@@ -6,6 +6,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useThemeColors } from "@hooks/useThemeColors";
 import React, { useRef, useState } from "react";
 import {
   Dimensions,
@@ -31,6 +32,13 @@ export default function OnboardingScreen({
   const [step, setStep] = useState(0);
   const [currentTask, setCurrentTask] = useState("");
   const scrollRef = useRef<ScrollView>(null);
+  const {
+    isDark,
+    screenBgOnboarding,
+    statusBarStyle,
+    textPrimary,
+    textSecondary,
+  } = useThemeColors();
 
   const stepLabels = [
     "Apenas o começo!",
@@ -62,10 +70,13 @@ export default function OnboardingScreen({
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#F8F8F8" }}
+      style={{ flex: 1, backgroundColor: screenBgOnboarding }}
       edges={["top", "bottom"]}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#F8F8F8" />
+      <StatusBar
+        barStyle={statusBarStyle}
+        backgroundColor={screenBgOnboarding}
+      />
 
       <Box alignItems="center" pt="$6" pb="$2">
         <Text fontSize={72}>🌞</Text>
@@ -85,7 +96,7 @@ export default function OnboardingScreen({
           keyboardShouldPersistTaps="handled"
           style={{ flex: 1 }}
         >
-          {/* Step 0 — Boas-vindas */}
+          {/* Step 0 */}
           <Box
             width={width}
             flex={1}
@@ -97,24 +108,24 @@ export default function OnboardingScreen({
               <Text
                 fontSize="$2xl"
                 fontWeight="$bold"
-                color="$textLight900"
                 textAlign="center"
                 lineHeight="$2xl"
+                style={{ color: textPrimary }}
               >
                 Vamos te ajudar a focar no que importa
               </Text>
               <Text
                 fontSize="$md"
-                color="$textLight600"
                 textAlign="center"
                 lineHeight="$lg"
+                style={{ color: textSecondary }}
               >
                 Organize suas tarefas e avance um passo de cada vez
               </Text>
             </VStack>
           </Box>
 
-          {/* Step 1 — Atividade atual */}
+          {/* Step 1 */}
           <Box
             width={width}
             flex={1}
@@ -126,9 +137,9 @@ export default function OnboardingScreen({
               <Text
                 fontSize="$2xl"
                 fontWeight="$bold"
-                color="$textLight900"
                 textAlign="center"
                 lineHeight="$2xl"
+                style={{ color: textPrimary }}
               >
                 Conte-nos, qual atividade está trabalhando no momento?
               </Text>
@@ -145,13 +156,14 @@ export default function OnboardingScreen({
                   onChangeText={setCurrentTask}
                   returnKeyType="done"
                   onSubmitEditing={() => goToStep(2)}
+                  style={{ color: "#1A1A1A" }}
                   fontSize="$sm"
                 />
               </Input>
             </VStack>
           </Box>
 
-          {/* Step 2 — Confirmação */}
+          {/* Step 2 */}
           <Box
             width={width}
             flex={1}
@@ -163,9 +175,9 @@ export default function OnboardingScreen({
               <Text
                 fontSize="$2xl"
                 fontWeight="$bold"
-                color="$textLight900"
                 textAlign="center"
                 lineHeight="$2xl"
+                style={{ color: textPrimary }}
               >
                 {currentTask
                   ? `Tudo pronto! Vamos focar em ${currentTask}!`
@@ -173,9 +185,9 @@ export default function OnboardingScreen({
               </Text>
               <Text
                 fontSize="$md"
-                color="$textLight600"
                 textAlign="center"
                 lineHeight="$lg"
+                style={{ color: textSecondary }}
               >
                 O próximo passo te levará para a página principal do{" "}
                 {Platform.OS === "web" ? "site" : "app"}.
@@ -185,13 +197,13 @@ export default function OnboardingScreen({
         </ScrollView>
 
         <VStack alignItems="center" pb="$8" px="$8" space="sm">
-          {/* Pular etapa */}
           {step === 1 && (
             <Pressable onPress={() => goToStep(2)} mb="$1">
               <Text
                 fontSize="$sm"
                 color="$textLight700"
                 textDecorationLine="underline"
+                style={{ color: textSecondary }}
               >
                 Pular etapa
               </Text>
@@ -203,36 +215,43 @@ export default function OnboardingScreen({
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <Pressable key={i} onPress={() => goToStep(i)}>
                 <Box
-                  w={i === step ? "$5" : "$2.5"}
                   h="$2.5"
                   borderRadius="$full"
-                  bg={i === step ? "$textLight800" : "$borderLight300"}
+                  style={{
+                    width: i === step ? 24 : 10,
+                    backgroundColor:
+                      i === step
+                        ? isDark
+                          ? "#A78BFA"
+                          : "#3B5BDB"
+                        : isDark
+                          ? "#444444"
+                          : "#D1D5DB",
+                  }}
                 />
               </Pressable>
             ))}
           </Box>
 
-          {/* Label */}
           <Text
             fontSize="$xs"
             fontWeight="$bold"
-            color="$textLight500"
             textTransform="uppercase"
             letterSpacing="$lg"
+            style={{ color: textSecondary }}
           >
             {stepLabels[step]}
           </Text>
 
-          {/* Botão */}
           {step === TOTAL_STEPS - 1 ? (
             <Pressable
               onPress={handleNext}
-              bg="$primary600"
               borderRadius="$xl"
               px="$12"
               py="$3.5"
               mt="$1"
               $pressed={{ opacity: 0.85 }}
+              style={{ backgroundColor: isDark ? "#5B21B6" : "#3B5BDB" }}
             >
               <Text fontSize="$md" fontWeight="$bold" color="$white">
                 Começar
@@ -241,14 +260,18 @@ export default function OnboardingScreen({
           ) : (
             <Pressable
               onPress={handleNext}
-              bg="$backgroundLight200"
               borderRadius="$xl"
               px="$12"
               py="$3.5"
               mt="$1"
               $pressed={{ opacity: 0.7 }}
+              style={{ backgroundColor: isDark ? "#2A2A2A" : "#E5E7EB" }}
             >
-              <Text fontSize="$md" fontWeight="$semibold" color="$textLight700">
+              <Text
+                fontSize="$md"
+                fontWeight="$semibold"
+                style={{ color: textPrimary }}
+              >
                 Continuar →
               </Text>
             </Pressable>

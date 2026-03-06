@@ -1,5 +1,6 @@
 import { HStack, Text, VStack } from "@gluestack-ui/themed";
-import React, { useState } from "react";
+import { useThemeColors } from "@hooks/useThemeColors";
+import React from "react";
 
 type SectionVariant = "primary" | "secondary";
 
@@ -7,36 +8,41 @@ interface SettingsSectionProps {
   title: string;
   subtitle: string;
   content: React.ReactNode;
-  variant?: SectionVariant
+  variant?: SectionVariant;
 }
 
 export default function SettingsSection({
   title,
   subtitle,
   content,
-  variant = "primary"
+  variant = "primary",
 }: Readonly<SettingsSectionProps>) {
   const isPrimary = variant === "primary";
+  const { textPrimary, textSecondary } = useThemeColors();
+
   return (
     <>
-      {/* Cabeçalho da seção */}
       <VStack mb="$5">
-      <HStack justifyContent="space-between" alignItems="flex-start" mb="$5">
-        <VStack flex={1} mr="$3">
-          <Text
-            fontSize={isPrimary ? "$xl" : "$md"}
-            fontWeight="$bold"
-            color="$textLight900"
-            mb="$0.5"
-          >
-            {title}
-          </Text>
-          <Text fontSize={isPrimary ? "$md" : "$sm"} color="$textLight500" lineHeight="$sm">
-            {subtitle}
-          </Text>
-        </VStack>
-      </HStack>
-      {content}
+        <HStack justifyContent="space-between" alignItems="flex-start" mb="$5">
+          <VStack flex={1} mr="$3">
+            <Text
+              fontSize={isPrimary ? "$xl" : "$md"}
+              fontWeight="$bold"
+              mb="$0.5"
+              style={{ color: textPrimary }}
+            >
+              {title}
+            </Text>
+            <Text
+              fontSize={isPrimary ? "$md" : "$sm"}
+              lineHeight="$sm"
+              style={{ color: textSecondary }}
+            >
+              {subtitle}
+            </Text>
+          </VStack>
+        </HStack>
+        {content}
       </VStack>
     </>
   );
