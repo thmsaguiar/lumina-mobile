@@ -15,8 +15,8 @@ import {
 import React, { useState } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { TaskList } from "@/interfaces/TaskList";
 import type { Task } from "@/interfaces/task";
+import type { TaskList } from "@/interfaces/TaskList";
 
 interface HomeScreenProps {
   currentTask?: string;
@@ -42,14 +42,8 @@ export default function HomeScreen({
   onTogglePomodoro,
 }: HomeScreenProps) {
   const { lists, addTask, editTask, addList, editList } = useBoard();
-  const {
-    isDark,
-    isHighContrast,
-    screenBg,
-    statusBarStyle,
-    textPrimary,
-    textSecondary,
-  } = useThemeColors();
+  const { isDark, isHighContrast, screenBg, statusBarStyle, textSecondary } =
+    useThemeColors();
 
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -227,33 +221,6 @@ export default function HomeScreen({
               )}
             </HStack>
           </Box>
-        )}
-
-        {/* Cabeçalho */}
-        {!focusMode && (
-          <HStack
-            justifyContent="space-between"
-            alignItems="flex-start"
-            mb="$5"
-          >
-            <VStack flex={1} mr="$3">
-              <Text
-                fontSize="$xl"
-                fontWeight="$bold"
-                mb="$0.5"
-                style={{ color: textPrimary }}
-              >
-                Quadro de atividades
-              </Text>
-              <Text
-                fontSize="$xs"
-                lineHeight="$sm"
-                style={{ color: textSecondary }}
-              >
-                Visualize e acompanhe suas atividades de forma organizada.
-              </Text>
-            </VStack>
-          </HStack>
         )}
 
         {/* Botão adicionar lista */}

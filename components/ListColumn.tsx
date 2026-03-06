@@ -1,5 +1,5 @@
-
 import { useBoard } from "@context/BoardContext";
+import { useClearReading } from "@hooks/useClearReading";
 import { useThemeColors } from "@hooks/useThemeColors";
 import {
   Box,
@@ -22,9 +22,9 @@ import {
   Trash2,
 } from "lucide-react-native";
 import React, { useState } from "react";
-import { TaskCardInline } from "./TaskCardInline";
 import type { TaskList } from "@/interfaces/TaskList";
 import type { Task } from "@/interfaces/task";
+import { TaskCardInline } from "./TaskCardInline";
 
 const COLOR_MAP: Record<string, string> = {
   white: "#F5F5F5",
@@ -49,7 +49,7 @@ export default function ListColumn({
   const { deleteList, deleteTask, toggleTask } = useBoard();
   const [expanded, setExpanded] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
-  const { textPrimary } = useThemeColors();
+  const { textPrimary, textSecondary } = useThemeColors();
 
   const bgColor = COLOR_MAP[list.color || "white"] ?? "#F5F5F5";
 
@@ -57,7 +57,6 @@ export default function ListColumn({
     setMenuVisible(false);
     deleteList(list.id);
   };
-
   const handleEditList = () => {
     setMenuVisible(false);
     onEditList(list);
@@ -70,7 +69,7 @@ export default function ListColumn({
       overflow="hidden"
       style={{ backgroundColor: bgColor }}
     >
-      {/* Header */}
+      {/* Header da lista */}
       <HStack
         px="$4"
         py="$3"
@@ -83,7 +82,6 @@ export default function ListColumn({
             ({list.tasks.length})
           </Text>
         </Text>
-
         <HStack space="xs" alignItems="center">
           <Pressable
             onPress={() => setExpanded((e) => !e)}
@@ -96,7 +94,6 @@ export default function ListColumn({
               color="$textLight500"
             />
           </Pressable>
-
           <Pressable
             onPress={() => setMenuVisible(true)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -107,7 +104,7 @@ export default function ListColumn({
         </HStack>
       </HStack>
 
-      {/* Tasks */}
+      {/* Tarefas */}
       {expanded && (
         <Box px="$3" pb="$3">
           {list.tasks.map((task) => (
@@ -120,7 +117,6 @@ export default function ListColumn({
               onToggle={() => toggleTask(task.id, list.id)}
             />
           ))}
-
           <Pressable onPress={() => onAddTask(list.id)} py="$3">
             <HStack alignItems="center" justifyContent="center" space="xs">
               <Icon as={Plus} size="xs" color="$textLight500" />
@@ -132,6 +128,7 @@ export default function ListColumn({
         </Box>
       )}
 
+      {/* Menu dropdown */}
       <Modal
         isOpen={menuVisible}
         onClose={() => setMenuVisible(false)}
@@ -140,7 +137,6 @@ export default function ListColumn({
         <ModalBackdrop />
         <ModalContent borderRadius="$2xl">
           <ModalBody p="$2">
-            {/* Editar lista */}
             <Pressable
               onPress={handleEditList}
               px="$4"
@@ -159,10 +155,7 @@ export default function ListColumn({
                 </Text>
               </HStack>
             </Pressable>
-
             <Box h={1} bg="$borderLight100" mx="$2" my="$1" />
-
-            {/* Remover lista */}
             <Pressable
               onPress={handleDeleteList}
               px="$4"
