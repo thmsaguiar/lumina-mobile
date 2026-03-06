@@ -1,4 +1,4 @@
-import type { Task } from "@context/BoardContext";
+import type { Task } from "@/interfaces/task";
 import {
   Box,
   HStack,

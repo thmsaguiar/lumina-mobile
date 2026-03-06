@@ -1,4 +1,5 @@
-import type { Task, TaskList } from "@/context/BoardContext";
+import type { Task } from "@/interfaces/task";
+import type { TaskList } from "@/interfaces/TaskList";
 import {
   Box,
   Button,
