@@ -24,7 +24,6 @@ function AppContent() {
     async function bootstrap() {
       try {
         const saved = await AsyncStorage.getItem(CURRENT_TASK_KEY);
-        console.log(saved);
         if (saved && saved.trim().length > 0) {
           setCurrentTask(saved);
           setScreen("home");
