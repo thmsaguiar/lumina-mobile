@@ -15,8 +15,8 @@ import {
 import React, { useState } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { Task } from "@/interfaces/task";
 import type { TaskList } from "@/interfaces/TaskList";
+import type { Task } from "@/interfaces/task";
 
 interface HomeScreenProps {
   currentTask?: string;
@@ -42,8 +42,14 @@ export default function HomeScreen({
   onTogglePomodoro,
 }: HomeScreenProps) {
   const { lists, addTask, editTask, addList, editList } = useBoard();
-  const { isDark, screenBg, statusBarStyle, textPrimary, textSecondary } =
-    useThemeColors();
+  const {
+    isDark,
+    isHighContrast,
+    screenBg,
+    statusBarStyle,
+    textPrimary,
+    textSecondary,
+  } = useThemeColors();
 
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -60,50 +66,62 @@ export default function HomeScreen({
     setEditingTask(null);
     setTaskModalVisible(true);
   };
-
   const openEditTask = (task: Task, listId: string) => {
     setActiveListId(listId);
     setEditingTask(task);
     setTaskModalVisible(true);
   };
-
   const handleSaveTask = (
     title: string,
     description: string,
     listId: string,
   ) => {
-    if (editingTask) {
-      editTask(editingTask.id, title, description, listId);
-    } else {
-      addTask(listId, title, description);
-    }
+    if (editingTask) editTask(editingTask.id, title, description, listId);
+    else addTask(listId, title, description);
     setTaskModalVisible(false);
     setEditingTask(null);
   };
-
   const openAddList = () => {
     setEditingList(null);
     setListModalVisible(true);
   };
-
   const openEditList = (list: TaskList) => {
     setEditingList(list);
     setListModalVisible(true);
   };
-
   const handleSaveList = (title: string, color: string) => {
-    if (editingList) {
-      editList(editingList.id, title, color);
-    } else {
-      addList(title, color);
-    }
+    if (editingList) editList(editingList.id, title, color);
+    else addList(title, color);
     setEditingList(null);
     setListModalVisible(false);
   };
 
+  // Cores do banner e botão de lista adaptadas ao alto contraste
+  const bannerBg = isHighContrast ? "#FFFFFF" : isDark ? "#2D2541" : "#EDE7F6";
+  const bannerBorder = isHighContrast
+    ? "#000000"
+    : isDark
+      ? "#6B4FA0"
+      : "#B39DDB";
+  const bannerTextColor = isHighContrast
+    ? "#000000"
+    : isDark
+      ? "#C5A8FF"
+      : "#4A2D8A";
+  const addListBg = isHighContrast ? "#FFFFFF" : isDark ? "#1E2A35" : "#EAF3FB";
+  const addListBorder = isHighContrast
+    ? "#000000"
+    : isDark
+      ? "#4A7FA8"
+      : "#6FA8DC";
+  const addListTextColor = isHighContrast
+    ? "#000000"
+    : isDark
+      ? "#7BB8E0"
+      : "#3A7CB8";
+
   const renderLists = () => {
     const targetLists = focusMode ? focusLists : lists;
-
     if (targetLists.length === 0) {
       return (
         <Box flex={1} alignItems="center" justifyContent="center" py="$16">
@@ -131,7 +149,6 @@ export default function HomeScreen({
         </Box>
       );
     }
-
     return targetLists.map((list) => (
       <ListColumn
         key={list.id}
@@ -174,9 +191,9 @@ export default function HomeScreen({
             px="$4"
             py="$3"
             style={{
-              backgroundColor: isDark ? "#2D2541" : "#EDE7F6",
-              borderWidth: 1.5,
-              borderColor: isDark ? "#6B4FA0" : "#B39DDB",
+              backgroundColor: bannerBg,
+              borderWidth: isHighContrast ? 2 : 1.5,
+              borderColor: bannerBorder,
             }}
           >
             <HStack space="sm" alignItems="center">
@@ -193,7 +210,7 @@ export default function HomeScreen({
                   fontSize="$sm"
                   fontWeight="$bold"
                   numberOfLines={2}
-                  style={{ color: isDark ? "#C5A8FF" : "#4A2D8A" }}
+                  style={{ color: bannerTextColor }}
                 >
                   {currentTask}
                 </Text>
@@ -204,10 +221,7 @@ export default function HomeScreen({
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   $pressed={{ opacity: 0.6 }}
                 >
-                  <Text
-                    fontSize="$xs"
-                    style={{ color: isDark ? "#9B7DD4" : "#7B52AB" }}
-                  >
+                  <Text fontSize="$xs" style={{ color: textSecondary }}>
                     ✕
                   </Text>
                 </Pressable>
@@ -254,20 +268,18 @@ export default function HomeScreen({
             $pressed={{ opacity: 0.75 }}
             style={{
               borderStyle: "dashed",
-              borderWidth: 2,
-              backgroundColor: isDark ? "#1E2A35" : "#EAF3FB",
-              borderColor: isDark ? "#4A7FA8" : "#6FA8DC",
+              borderWidth: isHighContrast ? 3 : 2,
+              backgroundColor: addListBg,
+              borderColor: addListBorder,
             }}
           >
-            <HStack space="xs" alignItems="center">
-              <Text
-                fontSize="$md"
-                fontWeight="$bold"
-                style={{ color: isDark ? "#7BB8E0" : "#3A7CB8" }}
-              >
-                + Adicionar lista
-              </Text>
-            </HStack>
+            <Text
+              fontSize="$md"
+              fontWeight="$bold"
+              style={{ color: addListTextColor }}
+            >
+              + Adicionar lista
+            </Text>
           </Pressable>
         )}
 
@@ -285,7 +297,6 @@ export default function HomeScreen({
           setEditingTask(null);
         }}
       />
-
       <ListModal
         visible={listModalVisible}
         editingList={editingList}

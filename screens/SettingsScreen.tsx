@@ -29,6 +29,9 @@ export default function SettingsScreen({
       <AppHeader
         focusMode={false}
         pomodoroEnabled={false}
+        pomodoroSeconds={0}
+        pomodoroRunning={false}
+        onTogglePomodoro={() => {}}
         onOpenSettings={handleClose}
         focusEnabled={false}
       />
@@ -80,7 +83,6 @@ export default function SettingsScreen({
                   </>
                 }
               />
-
               <SettingsSection
                 title="Personalizações Visuais"
                 subtitle="Algumas configurações extras que podem melhorar sua experiência."
@@ -150,7 +152,6 @@ export default function SettingsScreen({
                   </>
                 }
               />
-
               <SettingsSection
                 title="Foco e Produtividade"
                 subtitle="Configurações para ajudar você a manter a concentração e organizar melhor seu tempo."
