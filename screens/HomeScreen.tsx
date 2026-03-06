@@ -2,7 +2,6 @@ import AppHeader from "@components/AppHeader";
 import ListColumn from "@components/ListColumn";
 import ListModal from "@components/ListModal";
 import TaskModal from "@components/TaskModal";
-import type { Task, TaskList } from "@context/BoardContext";
 import { useBoard } from "@context/BoardContext";
 import { useThemeColors } from "@hooks/useThemeColors";
 import {
@@ -16,16 +15,20 @@ import {
 import React, { useState } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { Task } from "@/interfaces/task";
+import type { TaskList } from "@/interfaces/TaskList";
 
 interface HomeScreenProps {
   currentTask?: string;
   onOpenSettings: () => void;
+  onClearCurrentTask?: () => void;
   pomodoroEnabled?: boolean;
 }
 
 export default function HomeScreen({
   currentTask,
   onOpenSettings,
+  onClearCurrentTask,
   pomodoroEnabled = true,
 }: HomeScreenProps) {
   const { lists, addTask, editTask, addList, editList } = useBoard();
@@ -183,6 +186,21 @@ export default function HomeScreen({
                   {currentTask}
                 </Text>
               </VStack>
+              {/* Botão para limpar a atividade atual */}
+              {onClearCurrentTask && (
+                <Pressable
+                  onPress={onClearCurrentTask}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  $pressed={{ opacity: 0.6 }}
+                >
+                  <Text
+                    fontSize="$xs"
+                    style={{ color: isDark ? "#9B7DD4" : "#7B52AB" }}
+                  >
+                    ✕
+                  </Text>
+                </Pressable>
+              )}
             </HStack>
           </Box>
         )}
