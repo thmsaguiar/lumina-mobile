@@ -62,29 +62,31 @@ export default function OnboardingScreen({
       ? goToStep(step + 1)
       : onComplete(currentTask || undefined);
 
-  // Cores dos dots e botões adaptadas
   const dotActiveColor = isHighContrast
-    ? "#000000"
+    ? "#FFFFFF"
     : isDark
       ? "#A78BFA"
       : "#3B5BDB";
   const dotInactiveColor = isHighContrast
-    ? "#AAAAAA"
+    ? "#555555"
     : isDark
       ? "#444444"
       : "#D1D5DB";
   const btnStartBg = isHighContrast
-    ? "#000000"
+    ? "#FFFFFF"
     : isDark
       ? "#5B21B6"
       : "#3B5BDB";
+  const btnStartText = isHighContrast ? "#000000" : "#FFFFFF";
   const btnContinueBg = isHighContrast
-    ? "#FFFFFF"
+    ? "#000000"
     : isDark
       ? "#2A2A2A"
       : "#E5E7EB";
-  const btnContinueBorder = isHighContrast ? "#000000" : "transparent";
-  const btnContinueText = isHighContrast ? "#000000" : textPrimary;
+  const btnContinueBorder = isHighContrast ? "#FFFFFF" : "transparent";
+  const btnContinueText = isHighContrast ? "#FFFFFF" : textPrimary;
+  const inputBorderColor = isHighContrast ? "#FFFFFF" : "transparent";
+  const inputTextColor = isHighContrast ? "#000000" : "#1A1A1A";
 
   return (
     <SafeAreaView
@@ -166,7 +168,9 @@ export default function OnboardingScreen({
                 borderRadius="$xl"
                 w="$full"
                 borderWidth={isHighContrast ? 2 : 0}
-                style={isHighContrast ? { borderColor: "#000000" } : undefined}
+                style={
+                  isHighContrast ? { borderColor: inputBorderColor } : undefined
+                }
               >
                 <InputField
                   placeholder="Ex: Estudar por 30 minutos"
@@ -176,7 +180,7 @@ export default function OnboardingScreen({
                   returnKeyType="done"
                   onSubmitEditing={() => goToStep(2)}
                   fontSize="$sm"
-                  style={{ color: "#1A1A1A" }}
+                  style={{ color: inputTextColor }}
                 />
               </Input>
             </VStack>
@@ -265,7 +269,11 @@ export default function OnboardingScreen({
               $pressed={{ opacity: 0.85 }}
               style={{ backgroundColor: btnStartBg }}
             >
-              <Text fontSize="$md" fontWeight="$bold" color="$white">
+              <Text
+                fontSize="$md"
+                fontWeight="$bold"
+                style={{ color: btnStartText }}
+              >
                 Começar
               </Text>
             </Pressable>

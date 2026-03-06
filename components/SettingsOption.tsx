@@ -54,7 +54,7 @@ export default function SettingsOption<
       {isToggle ? (
         <Switch
           value={value as boolean}
-          onValueChange={onChange as any}
+          onValueChange={(v: boolean) => onChange(v)}
           alignSelf="center"
         />
       ) : (

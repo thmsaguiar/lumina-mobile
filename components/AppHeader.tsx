@@ -75,14 +75,11 @@ export default function AppHeader({
                 <Text
                   fontSize="$sm"
                   fontWeight="$semibold"
-                  style={{ color: isHighContrast ? "#FFFFFF" : textPrimary }}
+                  style={{ color: textPrimary }}
                 >
                   {formatTime(pomodoroSeconds)}
                 </Text>
-                <Text
-                  fontSize="$xs"
-                  style={{ color: isHighContrast ? "#FFFFFF" : textSecondary }}
-                >
+                <Text fontSize="$xs" style={{ color: textSecondary }}>
                   {pomodoroRunning ? "⏸" : "▶"}
                 </Text>
               </HStack>
@@ -98,16 +95,19 @@ export default function AppHeader({
               style={buttonStyle}
             >
               <HStack space="xs" alignItems="center">
-                <Text
-                  fontSize="$xs"
-                  style={{ color: isHighContrast ? "#FFFFFF" : textSecondary }}
-                >
+                <Text fontSize="$xs" style={{ color: textSecondary }}>
                   Modo foco:{" "}
                 </Text>
                 <Text
                   fontSize="$xs"
                   fontWeight="$bold"
-                  style={{ color: isHighContrast ? "#FFFF00" : undefined }}
+                  style={{
+                    color: isHighContrast
+                      ? focusMode
+                        ? "#00FF00"
+                        : "#FF4444"
+                      : undefined,
+                  }}
                   color={
                     !isHighContrast
                       ? focusMode

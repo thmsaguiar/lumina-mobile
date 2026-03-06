@@ -96,26 +96,25 @@ export default function HomeScreen({
     setListModalVisible(false);
   };
 
-  // Cores do banner e botão de lista adaptadas ao alto contraste
-  const bannerBg = isHighContrast ? "#FFFFFF" : isDark ? "#2D2541" : "#EDE7F6";
+  const bannerBg = isHighContrast ? "#000000" : isDark ? "#2D2541" : "#EDE7F6";
   const bannerBorder = isHighContrast
-    ? "#000000"
+    ? "#FFFFFF"
     : isDark
       ? "#6B4FA0"
       : "#B39DDB";
   const bannerTextColor = isHighContrast
-    ? "#000000"
+    ? "#FFFFFF"
     : isDark
       ? "#C5A8FF"
       : "#4A2D8A";
-  const addListBg = isHighContrast ? "#FFFFFF" : isDark ? "#1E2A35" : "#EAF3FB";
+  const addListBg = isHighContrast ? "#000000" : isDark ? "#1E2A35" : "#EAF3FB";
   const addListBorder = isHighContrast
-    ? "#000000"
+    ? "#FFFFFF"
     : isDark
       ? "#4A7FA8"
       : "#6FA8DC";
   const addListTextColor = isHighContrast
-    ? "#000000"
+    ? "#FFFFFF"
     : isDark
       ? "#7BB8E0"
       : "#3A7CB8";

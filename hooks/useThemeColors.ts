@@ -1,22 +1,14 @@
 import { useSettings } from "@hooks/useSettings";
 
-/**
- * Hook centralizado de cores.
- *
- * Prioridade:
- *  1. highContrast → força máximo contraste (preto/branco puros), ignora darkMode
- *  2. darkMode     → paleta escura
- *  3. padrão       → paleta clara
- */
 export function useThemeColors() {
   const { settings } = useSettings();
   const isDark = settings.visual.darkMode;
   const isHighContrast = settings.visual.highContrast;
 
-  // ── Alto contraste: preto/branco puros ──────────────────────────────────────
+  // ── Alto contraste: fundo preto puro, texto/bordas brancos ─────────────────
   if (isHighContrast) {
     return {
-      isDark: false,
+      isDark: true,
       isHighContrast: true,
 
       screenBg: "#000000",
@@ -24,14 +16,14 @@ export function useThemeColors() {
 
       headerBg: "#000000",
       headerBorder: "#FFFFFF",
-      headerButtonBg: "#FFFFFF",
+      headerButtonBg: "#000000",
       headerButtonBorder: "#FFFFFF",
 
       textPrimary: "#FFFFFF",
       textSecondary: "#FFFFFF",
-      textMuted: "#FFFFFF",
+      textMuted: "#CCCCCC",
 
-      statusBarStyle: "dark-content" as "dark-content" | "light-content",
+      statusBarStyle: "light-content" as "dark-content" | "light-content",
     };
   }
 

@@ -21,14 +21,11 @@ function AppContent() {
   const isDark = settings.visual.darkMode;
   const isHighContrast = settings.visual.highContrast;
 
-  // Alto contraste força modo claro no GluestackUIProvider
-  const colorMode = isDark && !isHighContrast ? "dark" : "light";
+  const colorMode = isDark || isHighContrast ? "dark" : "light";
 
   const [screen, setScreen] = useState<Screen | null>(null);
   const [currentTask, setCurrentTask] = useState<string | undefined>(undefined);
-
   const [focusMode, setFocusMode] = useState(false);
-
   const [pomodoroSeconds, setPomodoroSeconds] = useState(POMODORO_DURATION);
   const [pomodoroRunning, setPomodoroRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -93,6 +90,13 @@ function AppContent() {
     await persistCurrentTask(undefined);
   };
 
+  const loadingBg = isHighContrast ? "#000000" : isDark ? "#181719" : "#F8F8F8";
+  const loadingColor = isHighContrast
+    ? "#FFFFFF"
+    : isDark
+      ? "#A78BFA"
+      : "#3B5BDB";
+
   if (screen === null) {
     return (
       <View
@@ -100,17 +104,10 @@ function AppContent() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: isHighContrast
-            ? "#FFFFFF"
-            : isDark
-              ? "#181719"
-              : "#F8F8F8",
+          backgroundColor: loadingBg,
         }}
       >
-        <ActivityIndicator
-          size="large"
-          color={isHighContrast ? "#000000" : isDark ? "#A78BFA" : "#3B5BDB"}
-        />
+        <ActivityIndicator size="large" color={loadingColor} />
       </View>
     );
   }
