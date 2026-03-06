@@ -13,6 +13,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useThemeColors } from "@hooks/useThemeColors";
 import React from "react";
 
 type OptionVariant = "toggle" | "select";
@@ -26,7 +27,9 @@ interface SettingsOptionProps<T = string> {
   options?: { label: string; value: T }[];
 }
 
-export default function SettingsOption<T extends string | null | undefined = string>({
+export default function SettingsOption<
+  T extends string | null | undefined = string,
+>({
   title,
   subtitle,
   variant = "toggle",
@@ -35,27 +38,41 @@ export default function SettingsOption<T extends string | null | undefined = str
   options = [],
 }: Readonly<SettingsOptionProps<T>>) {
   const isToggle = variant === "toggle";
+  const { textPrimary, textSecondary } = useThemeColors();
 
   return (
     <HStack justifyContent="space-between" alignItems="center" mb="$2">
       <VStack flex={1} mr="$3">
-        <Text fontSize="$md" color="$textLight900">
+        <Text fontSize="$md" style={{ color: textPrimary }}>
           {title}
         </Text>
-        <Text fontSize="$sm" color="$textLight500">
+        <Text fontSize="$sm" style={{ color: textSecondary }}>
           {subtitle}
         </Text>
       </VStack>
 
       {isToggle ? (
-        <Switch value={value as boolean} onValueChange={onChange as any} alignSelf="center" />
+        <Switch
+          value={value as boolean}
+          onValueChange={onChange as any}
+          alignSelf="center"
+        />
       ) : (
-        <Select selectedValue={value as T} onValueChange={(val) => onChange(val as T)} alignSelf="center">
+        <Select
+          selectedValue={value as T}
+          onValueChange={(val) => onChange(val as T)}
+          alignSelf="center"
+        >
           <SelectTrigger w={150}>
-            {/* Convertendo para string apenas para o input */}
-            <SelectInput value={value == null ? "" : String(
-      options.find(opt => opt.value === value)?.label ?? "" 
-    )} />
+            <SelectInput
+              value={
+                value == null
+                  ? ""
+                  : String(
+                      options.find((opt) => opt.value === value)?.label ?? "",
+                    )
+              }
+            />
             <SelectIcon as={ChevronDownIcon} />
           </SelectTrigger>
 
@@ -63,7 +80,11 @@ export default function SettingsOption<T extends string | null | undefined = str
             <SelectBackdrop />
             <SelectContent>
               {options.map((opt) => (
-                <SelectItem key={String(opt.value)} label={opt.label} value={opt.value == null ? "" : String(opt.value)} />
+                <SelectItem
+                  key={String(opt.value)}
+                  label={opt.label}
+                  value={opt.value == null ? "" : String(opt.value)}
+                />
               ))}
             </SelectContent>
           </SelectPortal>

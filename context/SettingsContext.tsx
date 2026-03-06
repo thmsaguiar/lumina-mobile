@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Tipos
 export type FontSizeOption = "small" | "medium" | "large";
 
 export type Settings = {
@@ -32,14 +31,12 @@ export type SettingsContextType = {
   updateSettings: (newSettings: Partial<Settings>) => Promise<void>;
 };
 
-// Lista de opções com label e value
 export const FONT_SIZE_OPTIONS: { label: string; value: FontSizeOption }[] = [
   { label: "Pequena", value: "small" },
   { label: "Média", value: "medium" },
   { label: "Grande", value: "large" },
 ];
 
-// Configurações padrões
 const defaultSettings: Settings = {
   cognitiveModes: {
     clearReading: false,
@@ -57,20 +54,17 @@ const defaultSettings: Settings = {
   },
 };
 
-// Contexto
 export const SettingsContext = createContext<SettingsContextType | undefined>(
-  undefined
+  undefined,
 );
 
 type Props = {
   children: React.ReactNode;
 };
 
-// Provider
 export const SettingsProvider = ({ children }: Props) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
 
-  // Carrega do AsyncStorage
   const loadSettings = useCallback(async () => {
     const stored = await AsyncStorage.getItem("settings");
     if (stored) setSettings(JSON.parse(stored));
@@ -80,25 +74,20 @@ export const SettingsProvider = ({ children }: Props) => {
     loadSettings();
   }, [loadSettings]);
 
-  // Atualiza parcialmente
-  const updateSettings = useCallback(
-    async (newSettings: Partial<Settings>) => {
-      setSettings((prev) => {
-        const updated = { ...prev, ...newSettings };
-        AsyncStorage.setItem("settings", JSON.stringify(updated));
-        return updated;
-      });
-    },
-    []
-  );
+  const updateSettings = useCallback(async (newSettings: Partial<Settings>) => {
+    setSettings((prev) => {
+      const updated = { ...prev, ...newSettings };
+      AsyncStorage.setItem("settings", JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
 
-  // Memoiza context
   const contextValue = useMemo(
     () => ({
       settings,
       updateSettings,
     }),
-    [settings, updateSettings]
+    [settings, updateSettings],
   );
 
   return (

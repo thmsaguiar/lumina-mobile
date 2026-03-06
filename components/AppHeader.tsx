@@ -1,4 +1,5 @@
 import { Box, HStack, Icon, Pressable, Text } from "@gluestack-ui/themed";
+import { useThemeColors } from "@hooks/useThemeColors";
 import { Settings } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useSettings } from "@hooks/useSettings";
@@ -23,7 +24,15 @@ export default function AppHeader({
   const [seconds, setSeconds] = useState(POMODORO_DURATION);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { settings } = useSettings(); // Hook de configurações
+  const { settings } = useSettings();
+  const {
+    headerBg,
+    headerBorder,
+    headerButtonBg,
+    headerButtonBorder,
+    textPrimary,
+    textSecondary,
+  } = useThemeColors();
 
   useEffect(() => {
     if (running) {
@@ -51,41 +60,45 @@ export default function AppHeader({
     return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   };
 
+  const buttonStyle = {
+    backgroundColor: headerButtonBg,
+    borderColor: headerButtonBorder,
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  };
+
   return (
     <Box
-      bg="$backgroundLight100"
       px="$4"
       py="$2"
       borderBottomWidth={1}
-      borderBottomColor="$borderLight200"
+      style={{ backgroundColor: headerBg, borderBottomColor: headerBorder }}
     >
       <HStack alignItems="center" justifyContent="space-between">
-        {/* Logo */}
         <Text fontSize={28}>🌞</Text>
 
         <HStack space="sm" alignItems="center">
           {/* Pomodoro */}
-          {(pomodoroEnabled && settings.productivity.pomodoroEnabled) && (
+          {pomodoroEnabled && settings.productivity.pomodoroEnabled && (
             <Pressable
               onPress={() => setRunning((r) => !r)}
-              bg="$white"
               borderRadius="$full"
-              px="$3"
-              py="$1.5"
               borderWidth={1}
-              borderColor="$borderLight200"
               $pressed={{ opacity: 0.7 }}
+              style={buttonStyle}
             >
               <HStack space="xs" alignItems="center">
                 <Text fontSize="$sm">🍎</Text>
                 <Text
                   fontSize="$sm"
                   fontWeight="$semibold"
-                  color="$textLight800"
+                  style={{ color: textPrimary }}
                 >
                   {formatTime(seconds)}
                 </Text>
-                <Text fontSize="$xs" color="$textLight500">
+                <Text fontSize="$xs" style={{ color: textSecondary }}>
                   {running ? "⏸" : "▶"}
                 </Text>
               </HStack>
@@ -93,19 +106,16 @@ export default function AppHeader({
           )}
 
           {/* Modo foco */}
-          {(focusEnabled && settings.productivity.focusMode) && (
+          {focusEnabled && settings.productivity.focusMode && (
             <Pressable
               onPress={onToggleFocus}
-              bg="$white"
               borderRadius="$full"
-              px="$3"
-              py="$1.5"
               borderWidth={1}
-              borderColor="$borderLight200"
               $pressed={{ opacity: 0.7 }}
+              style={buttonStyle}
             >
               <HStack space="xs" alignItems="center">
-                <Text fontSize="$xs" color="$textLight600">
+                <Text fontSize="$xs" style={{ color: textSecondary }}>
                   Modo foco:{" "}
                 </Text>
                 <Text
@@ -118,19 +128,21 @@ export default function AppHeader({
               </HStack>
             </Pressable>
           )}
-          
+
           {/* Settings */}
           <Pressable
             onPress={onOpenSettings}
-            bg="$white"
             w={36}
             h={36}
             borderRadius="$full"
             alignItems="center"
             justifyContent="center"
             borderWidth={1}
-            borderColor="$borderLight200"
             $pressed={{ opacity: 0.7 }}
+            style={{
+              backgroundColor: headerButtonBg,
+              borderColor: headerButtonBorder,
+            }}
           >
             <Icon as={Settings} size="sm" color="$textLight600" />
           </Pressable>
