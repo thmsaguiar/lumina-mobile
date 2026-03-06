@@ -22,20 +22,29 @@ interface HomeScreenProps {
   currentTask?: string;
   onOpenSettings: () => void;
   onClearCurrentTask?: () => void;
+  focusMode: boolean;
+  onToggleFocus: () => void;
   pomodoroEnabled?: boolean;
+  pomodoroSeconds: number;
+  pomodoroRunning: boolean;
+  onTogglePomodoro: () => void;
 }
 
 export default function HomeScreen({
   currentTask,
   onOpenSettings,
   onClearCurrentTask,
+  focusMode,
+  onToggleFocus,
   pomodoroEnabled = true,
+  pomodoroSeconds,
+  pomodoroRunning,
+  onTogglePomodoro,
 }: HomeScreenProps) {
   const { lists, addTask, editTask, addList, editList } = useBoard();
   const { isDark, screenBg, statusBarStyle, textPrimary, textSecondary } =
     useThemeColors();
 
-  const [focusMode, setFocusMode] = useState(false);
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeListId, setActiveListId] = useState<string>("");
@@ -143,10 +152,13 @@ export default function HomeScreen({
 
       <AppHeader
         focusMode={focusMode}
-        onToggleFocus={() => setFocusMode((f) => !f)}
-        pomodoroEnabled={pomodoroEnabled}
-        onOpenSettings={onOpenSettings}
+        onToggleFocus={onToggleFocus}
         focusEnabled={true}
+        pomodoroEnabled={pomodoroEnabled}
+        pomodoroSeconds={pomodoroSeconds}
+        pomodoroRunning={pomodoroRunning}
+        onTogglePomodoro={onTogglePomodoro}
+        onOpenSettings={onOpenSettings}
       />
 
       <ScrollView
@@ -186,7 +198,6 @@ export default function HomeScreen({
                   {currentTask}
                 </Text>
               </VStack>
-              {/* Botão para limpar a atividade atual */}
               {onClearCurrentTask && (
                 <Pressable
                   onPress={onClearCurrentTask}

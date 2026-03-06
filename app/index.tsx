@@ -7,21 +7,52 @@ import HomeScreen from "@screens/HomeScreen";
 import OnboardingScreen from "@screens/OnboardingScreen";
 import SettingsScreen from "@screens/SettingsScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const CURRENT_TASK_KEY = "@lumina:currentTask";
+const POMODORO_DURATION = 25 * 60;
 
 type Screen = "onboarding" | "home" | "settings";
 
 function AppContent() {
   const { settings } = useSettings();
+
   const [screen, setScreen] = useState<Screen | null>(null);
   const [currentTask, setCurrentTask] = useState<string | undefined>(undefined);
 
+  const [focusMode, setFocusMode] = useState(false);
+
+  const [pomodoroSeconds, setPomodoroSeconds] = useState(POMODORO_DURATION);
+  const [pomodoroRunning, setPomodoroRunning] = useState(false);
+
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
-    async function bootstrap() {
+    if (pomodoroRunning) {
+      intervalRef.current = setInterval(() => {
+        setPomodoroSeconds((s) => {
+          if (s <= 1) {
+            clearInterval(intervalRef.current!);
+            setPomodoroRunning(false);
+            return POMODORO_DURATION;
+          }
+          return s - 1;
+        });
+      }, 1000);
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [pomodoroRunning]);
+
+  const handleTogglePomodoro = () => setPomodoroRunning((r) => !r);
+
+  useEffect(() => {
+    async function verificaAtividade() {
       try {
         const saved = await AsyncStorage.getItem(CURRENT_TASK_KEY);
         if (saved && saved.trim().length > 0) {
@@ -34,7 +65,7 @@ function AppContent() {
         setScreen("onboarding");
       }
     }
-    bootstrap();
+    verificaAtividade();
   }, []);
 
   async function persistCurrentTask(task: string | undefined) {
@@ -90,6 +121,11 @@ function AppContent() {
             currentTask={currentTask}
             onOpenSettings={() => setScreen("settings")}
             onClearCurrentTask={handleClearCurrentTask}
+            focusMode={focusMode}
+            onToggleFocus={() => setFocusMode((f) => !f)}
+            pomodoroSeconds={pomodoroSeconds}
+            pomodoroRunning={pomodoroRunning}
+            onTogglePomodoro={handleTogglePomodoro}
             pomodoroEnabled
           />
         );

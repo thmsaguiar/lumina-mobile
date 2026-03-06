@@ -1,29 +1,30 @@
 import { Box, HStack, Icon, Pressable, Text } from "@gluestack-ui/themed";
 import { useThemeColors } from "@hooks/useThemeColors";
-import { Settings } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
 import { useSettings } from "@hooks/useSettings";
-
-const POMODORO_DURATION = 25 * 60;
+import { Settings } from "lucide-react-native";
+import React from "react";
 
 interface AppHeaderProps {
   focusMode: boolean;
   focusEnabled?: boolean;
   onToggleFocus?: () => void;
   pomodoroEnabled: boolean;
+  pomodoroSeconds: number;
+  pomodoroRunning: boolean;
+  onTogglePomodoro: () => void;
   onOpenSettings: () => void;
 }
 
 export default function AppHeader({
   focusMode,
+  focusEnabled,
   onToggleFocus,
   pomodoroEnabled,
-  focusEnabled,
+  pomodoroSeconds,
+  pomodoroRunning,
+  onTogglePomodoro,
   onOpenSettings,
 }: AppHeaderProps) {
-  const [seconds, setSeconds] = useState(POMODORO_DURATION);
-  const [running, setRunning] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { settings } = useSettings();
   const {
     headerBg,
@@ -33,26 +34,6 @@ export default function AppHeader({
     textPrimary,
     textSecondary,
   } = useThemeColors();
-
-  useEffect(() => {
-    if (running) {
-      intervalRef.current = setInterval(() => {
-        setSeconds((s) => {
-          if (s <= 1) {
-            clearInterval(intervalRef.current!);
-            setRunning(false);
-            return POMODORO_DURATION;
-          }
-          return s - 1;
-        });
-      }, 1000);
-    } else {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [running]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
@@ -83,7 +64,7 @@ export default function AppHeader({
           {/* Pomodoro */}
           {pomodoroEnabled && settings.productivity.pomodoroEnabled && (
             <Pressable
-              onPress={() => setRunning((r) => !r)}
+              onPress={onTogglePomodoro}
               borderRadius="$full"
               borderWidth={1}
               $pressed={{ opacity: 0.7 }}
@@ -96,10 +77,10 @@ export default function AppHeader({
                   fontWeight="$semibold"
                   style={{ color: textPrimary }}
                 >
-                  {formatTime(seconds)}
+                  {formatTime(pomodoroSeconds)}
                 </Text>
                 <Text fontSize="$xs" style={{ color: textSecondary }}>
-                  {running ? "⏸" : "▶"}
+                  {pomodoroRunning ? "⏸" : "▶"}
                 </Text>
               </HStack>
             </Pressable>
