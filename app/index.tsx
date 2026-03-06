@@ -18,15 +18,16 @@ type Screen = "onboarding" | "home" | "settings";
 
 function AppContent() {
   const { settings } = useSettings();
+  const isDark = settings.visual.darkMode;
+  const isHighContrast = settings.visual.highContrast;
+
+  const colorMode = isDark || isHighContrast ? "dark" : "light";
 
   const [screen, setScreen] = useState<Screen | null>(null);
   const [currentTask, setCurrentTask] = useState<string | undefined>(undefined);
-
   const [focusMode, setFocusMode] = useState(false);
-
   const [pomodoroSeconds, setPomodoroSeconds] = useState(POMODORO_DURATION);
   const [pomodoroRunning, setPomodoroRunning] = useState(false);
-
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -49,10 +50,8 @@ function AppContent() {
     };
   }, [pomodoroRunning]);
 
-  const handleTogglePomodoro = () => setPomodoroRunning((r) => !r);
-
   useEffect(() => {
-    async function verificaAtividade() {
+    async function bootstrap() {
       try {
         const saved = await AsyncStorage.getItem(CURRENT_TASK_KEY);
         if (saved && saved.trim().length > 0) {
@@ -65,7 +64,7 @@ function AppContent() {
         setScreen("onboarding");
       }
     }
-    verificaAtividade();
+    bootstrap();
   }, []);
 
   async function persistCurrentTask(task: string | undefined) {
@@ -91,6 +90,13 @@ function AppContent() {
     await persistCurrentTask(undefined);
   };
 
+  const loadingBg = isHighContrast ? "#000000" : isDark ? "#181719" : "#F8F8F8";
+  const loadingColor = isHighContrast
+    ? "#FFFFFF"
+    : isDark
+      ? "#A78BFA"
+      : "#3B5BDB";
+
   if (screen === null) {
     return (
       <View
@@ -98,13 +104,10 @@ function AppContent() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: settings.visual.darkMode ? "#181719" : "#F8F8F8",
+          backgroundColor: loadingBg,
         }}
       >
-        <ActivityIndicator
-          size="large"
-          color={settings.visual.darkMode ? "#A78BFA" : "#3B5BDB"}
-        />
+        <ActivityIndicator size="large" color={loadingColor} />
       </View>
     );
   }
@@ -125,7 +128,7 @@ function AppContent() {
             onToggleFocus={() => setFocusMode((f) => !f)}
             pomodoroSeconds={pomodoroSeconds}
             pomodoroRunning={pomodoroRunning}
-            onTogglePomodoro={handleTogglePomodoro}
+            onTogglePomodoro={() => setPomodoroRunning((r) => !r)}
             pomodoroEnabled
           />
         );
@@ -133,10 +136,7 @@ function AppContent() {
   };
 
   return (
-    <GluestackUIProvider
-      config={config}
-      colorMode={settings.visual.darkMode ? "dark" : "light"}
-    >
+    <GluestackUIProvider config={config} colorMode={colorMode}>
       <BoardProvider>{renderScreen()}</BoardProvider>
     </GluestackUIProvider>
   );

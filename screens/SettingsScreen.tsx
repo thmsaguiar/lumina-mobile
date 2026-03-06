@@ -19,6 +19,28 @@ export default function SettingsScreen({
   const { settings, updateSettings } = useSettings();
   const { screenBg, statusBarStyle } = useThemeColors();
 
+  const handleDarkMode = (val: boolean | string | null | undefined) => {
+    const active = !!val;
+    updateSettings({
+      visual: {
+        ...settings.visual,
+        darkMode: active,
+        highContrast: active ? false : settings.visual.highContrast,
+      },
+    });
+  };
+
+  const handleHighContrast = (val: boolean | string | null | undefined) => {
+    const active = !!val;
+    updateSettings({
+      visual: {
+        ...settings.visual,
+        highContrast: active,
+        darkMode: active ? false : settings.visual.darkMode,
+      },
+    });
+  };
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: screenBg }}
@@ -29,6 +51,9 @@ export default function SettingsScreen({
       <AppHeader
         focusMode={false}
         pomodoroEnabled={false}
+        pomodoroSeconds={0}
+        pomodoroRunning={false}
+        onTogglePomodoro={() => {}}
         onOpenSettings={handleClose}
         focusEnabled={false}
       />
@@ -80,7 +105,6 @@ export default function SettingsScreen({
                   </>
                 }
               />
-
               <SettingsSection
                 title="Personalizações Visuais"
                 subtitle="Algumas configurações extras que podem melhorar sua experiência."
@@ -107,31 +131,25 @@ export default function SettingsScreen({
                     />
                     <SettingsOption
                       title="Modo Escuro"
-                      subtitle="Minimiza o cansaço visual ao suavizar o brilho da tela."
+                      subtitle={
+                        settings.visual.highContrast
+                          ? "Desative o alto contraste para usar o modo escuro."
+                          : "Minimiza o cansaço visual ao suavizar o brilho da tela."
+                      }
                       variant="toggle"
                       value={settings.visual.darkMode}
-                      onChange={(val) =>
-                        updateSettings({
-                          visual: {
-                            ...settings.visual,
-                            darkMode: val as boolean,
-                          },
-                        })
-                      }
+                      onChange={handleDarkMode}
                     />
                     <SettingsOption
                       title="Alto Contraste"
-                      subtitle="Amplia a diferença entre cores e textos, facilitando a leitura."
+                      subtitle={
+                        settings.visual.darkMode
+                          ? "Desative o modo escuro para usar o alto contraste."
+                          : "Amplia a diferença entre cores e textos, facilitando a leitura."
+                      }
                       variant="toggle"
                       value={settings.visual.highContrast}
-                      onChange={(val) =>
-                        updateSettings({
-                          visual: {
-                            ...settings.visual,
-                            highContrast: val as boolean,
-                          },
-                        })
-                      }
+                      onChange={handleHighContrast}
                     />
                     <SettingsOption
                       title="Passos guiados"
@@ -150,7 +168,6 @@ export default function SettingsScreen({
                   </>
                 }
               />
-
               <SettingsSection
                 title="Foco e Produtividade"
                 subtitle="Configurações para ajudar você a manter a concentração e organizar melhor seu tempo."

@@ -27,6 +27,7 @@ export default function AppHeader({
 }: AppHeaderProps) {
   const { settings } = useSettings();
   const {
+    isHighContrast,
     headerBg,
     headerBorder,
     headerButtonBg,
@@ -44,7 +45,7 @@ export default function AppHeader({
   const buttonStyle = {
     backgroundColor: headerButtonBg,
     borderColor: headerButtonBorder,
-    borderWidth: 1,
+    borderWidth: isHighContrast ? 2 : 1,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -54,7 +55,7 @@ export default function AppHeader({
     <Box
       px="$4"
       py="$2"
-      borderBottomWidth={1}
+      borderBottomWidth={isHighContrast ? 2 : 1}
       style={{ backgroundColor: headerBg, borderBottomColor: headerBorder }}
     >
       <HStack alignItems="center" justifyContent="space-between">
@@ -66,7 +67,6 @@ export default function AppHeader({
             <Pressable
               onPress={onTogglePomodoro}
               borderRadius="$full"
-              borderWidth={1}
               $pressed={{ opacity: 0.7 }}
               style={buttonStyle}
             >
@@ -91,7 +91,6 @@ export default function AppHeader({
             <Pressable
               onPress={onToggleFocus}
               borderRadius="$full"
-              borderWidth={1}
               $pressed={{ opacity: 0.7 }}
               style={buttonStyle}
             >
@@ -102,7 +101,20 @@ export default function AppHeader({
                 <Text
                   fontSize="$xs"
                   fontWeight="$bold"
-                  color={focusMode ? "$success600" : "$error500"}
+                  style={{
+                    color: isHighContrast
+                      ? focusMode
+                        ? "#00FF00"
+                        : "#FF4444"
+                      : undefined,
+                  }}
+                  color={
+                    !isHighContrast
+                      ? focusMode
+                        ? "$success600"
+                        : "$error500"
+                      : undefined
+                  }
                 >
                   {focusMode ? "ativado" : "desativado"}
                 </Text>
@@ -118,14 +130,18 @@ export default function AppHeader({
             borderRadius="$full"
             alignItems="center"
             justifyContent="center"
-            borderWidth={1}
             $pressed={{ opacity: 0.7 }}
             style={{
               backgroundColor: headerButtonBg,
               borderColor: headerButtonBorder,
+              borderWidth: isHighContrast ? 2 : 1,
             }}
           >
-            <Icon as={Settings} size="sm" color="$textLight600" />
+            <Icon
+              as={Settings}
+              size="sm"
+              color={isHighContrast ? "$white" : "$textLight600"}
+            />
           </Pressable>
         </HStack>
       </HStack>

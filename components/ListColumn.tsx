@@ -1,4 +1,4 @@
-import type { Task, TaskList } from "@context/BoardContext";
+
 import { useBoard } from "@context/BoardContext";
 import { useThemeColors } from "@hooks/useThemeColors";
 import {
@@ -23,6 +23,8 @@ import {
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { TaskCardInline } from "./TaskCardInline";
+import type { TaskList } from "@/interfaces/TaskList";
+import type { Task } from "@/interfaces/task";
 
 const COLOR_MAP: Record<string, string> = {
   white: "#F5F5F5",

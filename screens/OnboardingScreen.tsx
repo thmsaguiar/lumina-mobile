@@ -34,6 +34,7 @@ export default function OnboardingScreen({
   const scrollRef = useRef<ScrollView>(null);
   const {
     isDark,
+    isHighContrast,
     screenBgOnboarding,
     statusBarStyle,
     textPrimary,
@@ -46,27 +47,46 @@ export default function OnboardingScreen({
     "Seu progresso começa agora!",
   ];
 
-  const goToStep = (targetStep: number) => {
-    scrollRef.current?.scrollTo({ x: targetStep * width, animated: true });
-    setStep(targetStep);
+  const goToStep = (t: number) => {
+    scrollRef.current?.scrollTo({ x: t * width, animated: true });
+    setStep(t);
   };
-
   const handleMomentumScrollEnd = (
     e: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
-    const newStep = Math.round(e.nativeEvent.contentOffset.x / width);
-    if (newStep !== step && newStep >= 0 && newStep < TOTAL_STEPS) {
-      setStep(newStep);
-    }
+    const s = Math.round(e.nativeEvent.contentOffset.x / width);
+    if (s !== step && s >= 0 && s < TOTAL_STEPS) setStep(s);
   };
+  const handleNext = () =>
+    step < TOTAL_STEPS - 1
+      ? goToStep(step + 1)
+      : onComplete(currentTask || undefined);
 
-  const handleNext = () => {
-    if (step < TOTAL_STEPS - 1) {
-      goToStep(step + 1);
-    } else {
-      onComplete(currentTask || undefined);
-    }
-  };
+  const dotActiveColor = isHighContrast
+    ? "#FFFFFF"
+    : isDark
+      ? "#A78BFA"
+      : "#3B5BDB";
+  const dotInactiveColor = isHighContrast
+    ? "#555555"
+    : isDark
+      ? "#444444"
+      : "#D1D5DB";
+  const btnStartBg = isHighContrast
+    ? "#FFFFFF"
+    : isDark
+      ? "#5B21B6"
+      : "#3B5BDB";
+  const btnStartText = isHighContrast ? "#000000" : "#FFFFFF";
+  const btnContinueBg = isHighContrast
+    ? "#000000"
+    : isDark
+      ? "#2A2A2A"
+      : "#E5E7EB";
+  const btnContinueBorder = isHighContrast ? "#FFFFFF" : "transparent";
+  const btnContinueText = isHighContrast ? "#FFFFFF" : textPrimary;
+  const inputBorderColor = isHighContrast ? "#FFFFFF" : "transparent";
+  const inputTextColor = isHighContrast ? "#000000" : "#1A1A1A";
 
   return (
     <SafeAreaView
@@ -147,7 +167,10 @@ export default function OnboardingScreen({
                 bg="$backgroundLight200"
                 borderRadius="$xl"
                 w="$full"
-                borderWidth={0}
+                borderWidth={isHighContrast ? 2 : 0}
+                style={
+                  isHighContrast ? { borderColor: inputBorderColor } : undefined
+                }
               >
                 <InputField
                   placeholder="Ex: Estudar por 30 minutos"
@@ -156,8 +179,8 @@ export default function OnboardingScreen({
                   onChangeText={setCurrentTask}
                   returnKeyType="done"
                   onSubmitEditing={() => goToStep(2)}
-                  style={{ color: "#1A1A1A" }}
                   fontSize="$sm"
+                  style={{ color: inputTextColor }}
                 />
               </Input>
             </VStack>
@@ -201,7 +224,6 @@ export default function OnboardingScreen({
             <Pressable onPress={() => goToStep(2)} mb="$1">
               <Text
                 fontSize="$sm"
-                color="$textLight700"
                 textDecorationLine="underline"
                 style={{ color: textSecondary }}
               >
@@ -220,13 +242,7 @@ export default function OnboardingScreen({
                   style={{
                     width: i === step ? 24 : 10,
                     backgroundColor:
-                      i === step
-                        ? isDark
-                          ? "#A78BFA"
-                          : "#3B5BDB"
-                        : isDark
-                          ? "#444444"
-                          : "#D1D5DB",
+                      i === step ? dotActiveColor : dotInactiveColor,
                   }}
                 />
               </Pressable>
@@ -251,9 +267,13 @@ export default function OnboardingScreen({
               py="$3.5"
               mt="$1"
               $pressed={{ opacity: 0.85 }}
-              style={{ backgroundColor: isDark ? "#5B21B6" : "#3B5BDB" }}
+              style={{ backgroundColor: btnStartBg }}
             >
-              <Text fontSize="$md" fontWeight="$bold" color="$white">
+              <Text
+                fontSize="$md"
+                fontWeight="$bold"
+                style={{ color: btnStartText }}
+              >
                 Começar
               </Text>
             </Pressable>
@@ -265,12 +285,16 @@ export default function OnboardingScreen({
               py="$3.5"
               mt="$1"
               $pressed={{ opacity: 0.7 }}
-              style={{ backgroundColor: isDark ? "#2A2A2A" : "#E5E7EB" }}
+              style={{
+                backgroundColor: btnContinueBg,
+                borderWidth: isHighContrast ? 2 : 0,
+                borderColor: btnContinueBorder,
+              }}
             >
               <Text
                 fontSize="$md"
                 fontWeight="$semibold"
-                style={{ color: textPrimary }}
+                style={{ color: btnContinueText }}
               >
                 Continuar →
               </Text>
