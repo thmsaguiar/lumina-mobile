@@ -19,6 +19,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useSettings } from "@hooks/useSettings";
 import { useTypography } from "@hooks/useTypography";
 import React, { useEffect, useState } from "react";
 
@@ -45,6 +46,7 @@ export default function ListModal({
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState("white");
   const { scaledFontSize } = useTypography();
+  const { settings } = useSettings();
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -76,6 +78,29 @@ export default function ListModal({
     }
   };
 
+  const getHeaderSubtitle = () => {
+    if (isEditing) {
+      return "Atualize o título e a cor da sua lista.";
+    }
+
+    if (settings.cognitiveModes.lowAttention) {
+      return "Nova lista para suas atividades.";
+    }
+
+    return "Crie uma nova lista para organizar suas atividades.";
+  };
+  const getTitle = () => {
+    if (isEditing) {
+      return "Editar lista";
+    }
+
+    if (settings.cognitiveModes.lowAttention) {
+      return "Nova lista";
+    }
+
+    return "Adicionar uma nova lista";
+  };
+
   return (
     <Modal isOpen={visible} onClose={onCancel} size="full">
       <ModalBackdrop />
@@ -92,13 +117,19 @@ export default function ListModal({
       >
         <ModalHeader px="$6" pt="$6" pb="$2">
           <VStack>
-            <Text style={{fontSize: scaledFontSize(tokens.xl),}} fontWeight="$bold" color="$textLight900">
-              {isEditing ? "Editar lista" : "Adicionar uma nova lista"}
+            <Text
+              style={{ fontSize: scaledFontSize(tokens.xl) }}
+              fontWeight="$bold"
+              color="$textLight900"
+            >
+              {getTitle()}
             </Text>
-            <Text style={{fontSize: scaledFontSize(tokens.sm),}} color="$textLight500" mt="$1">
-              {isEditing
-                ? "Atualize o título e a cor da sua lista."
-                : "Crie uma nova lista para organizar suas atividades."}
+            <Text
+              style={{ fontSize: scaledFontSize(tokens.sm) }}
+              color="$textLight500"
+              mt="$1"
+            >
+              {getHeaderSubtitle()}
             </Text>
           </VStack>
         </ModalHeader>
@@ -111,7 +142,7 @@ export default function ListModal({
             <FormControl isRequired>
               <FormControlLabel>
                 <FormControlLabelText
-                  style={{fontSize: scaledFontSize(tokens.sm),}}
+                  style={{ fontSize: scaledFontSize(tokens.sm) }}
                   fontWeight="$semibold"
                   color="$textLight600"
                 >
@@ -124,7 +155,10 @@ export default function ListModal({
                   placeholderTextColor="#AAAAAA"
                   value={title}
                   onChangeText={setTitle}
-                  style={{fontSize: scaledFontSize(tokens.sm),color: "#1A1A1A"} }
+                  style={{
+                    fontSize: scaledFontSize(tokens.sm),
+                    color: "#1A1A1A",
+                  }}
                 />
               </Input>
             </FormControl>
@@ -133,7 +167,7 @@ export default function ListModal({
             <FormControl>
               <FormControlLabel>
                 <FormControlLabelText
-                  style={{fontSize: scaledFontSize(tokens.sm),}}
+                  style={{ fontSize: scaledFontSize(tokens.sm) }}
                   fontWeight="$semibold"
                   color="$textLight600"
                 >
