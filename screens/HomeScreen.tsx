@@ -12,12 +12,14 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import React, { useState } from "react";
-import { StatusBar } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Settings, StatusBar, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Task } from "@/interfaces/task";
 import type { TaskList } from "@/interfaces/TaskList";
 import { useTypography } from "@hooks/useTypography";
+import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
+import { useSettings } from "@hooks/useSettings";
 
 interface HomeScreenProps {
   currentTask?: string;
@@ -30,6 +32,8 @@ interface HomeScreenProps {
   pomodoroRunning: boolean;
   onTogglePomodoro: () => void;
 }
+
+const WalkthroughableButton = walkthroughable(TouchableOpacity); // Tutorial
 
 export default function HomeScreen({
   currentTask,
@@ -45,14 +49,17 @@ export default function HomeScreen({
   const { lists, addTask, editTask, addList, editList } = useBoard();
   const { isDark, isHighContrast, screenBg, statusBarStyle, textSecondary } =
     useThemeColors();
+  const { settings } = useSettings();
+  const { scaledFontSize } = useTypography();
+  const { start, copilotEvents, goToNext } = useCopilot(); // Tutorial
 
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeListId, setActiveListId] = useState<string>("");
   const [listModalVisible, setListModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<TaskList | null>(null);
-
-  const { scaledFontSize } = useTypography();
+  
+  
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -103,6 +110,8 @@ export default function HomeScreen({
     setListModalVisible(false);
   };
 
+  
+
   const bannerBg = isHighContrast ? "#000000" : isDark ? "#2D2541" : "#EDE7F6";
   const bannerBorder = isHighContrast
     ? "#FFFFFF"
@@ -114,6 +123,17 @@ export default function HomeScreen({
     : isDark
       ? "#C5A8FF"
       : "#4A2D8A";
+      const helperBg = isHighContrast ? "#000000" : isDark ? "#63686d98" : "#c2d0daa4";
+  const helperBorder = isHighContrast
+    ? "#FFFFFF"
+    : isDark
+      ? "#646b70"
+      : "#a7adb1";
+  const helperTextColor = isHighContrast
+    ? "#FFFFFF"
+    : isDark
+      ? "#6FA8DC"
+      : "#2a2c2e";
   const addListBg = isHighContrast ? "#000000" : isDark ? "#1E2A35" : "#EAF3FB";
   const addListBorder = isHighContrast
     ? "#FFFFFF"
@@ -153,6 +173,7 @@ export default function HomeScreen({
         </Box>
       );
     }
+
     return targetLists.map((list) => (
       <ListColumn
         key={list.id}
@@ -163,6 +184,21 @@ export default function HomeScreen({
       />
     ));
   };
+
+  // Passos Guiados
+  useEffect(() => {
+    const handleStepChange = (step: any) => {
+      if (step?.name === "new_list_btn") {
+        // Abre modal de criação
+        openAddList();
+      }
+    };
+    copilotEvents.on("stepChange", handleStepChange);
+
+    return () => {
+      copilotEvents.off("stepChange", handleStepChange);
+    };
+  }, [copilotEvents, openAddList]); 
 
   return (
     <SafeAreaView
@@ -187,6 +223,44 @@ export default function HomeScreen({
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Guia do app */}
+        { (settings.visual.guidedSteps && !focusMode) && (
+          <Box
+            mb="$4"
+            borderRadius="$2xl"
+            px="$4"
+            py="$3"
+            style={{
+              backgroundColor: helperBg,
+              borderWidth: isHighContrast ? 2 : 1.5,
+              borderColor: helperBorder,
+            }}
+          >
+            <HStack space="sm" alignItems="center">
+              <Text fontSize="$lg">❓</Text>
+              <VStack flex={1}>
+                <Text
+                  fontWeight="$medium"
+                  style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}
+                >
+                  Precisa de ajuda para criar uma lista?
+                </Text>
+              </VStack>
+              {onClearCurrentTask && (
+
+                <Pressable
+                  onPress={() => start()}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  $pressed={{ opacity: 0.6 }}
+                >
+                  <Text style={{ fontSize: scaledFontSize(tokens.xs), color: helperTextColor }}>
+                    Iniciar tutorial
+                  </Text>
+                </Pressable>
+              )}
+            </HStack>
+          </Box>
+        )}
         {/* Banner foco atual */}
         {!focusMode && currentTask && (
           <Box
@@ -234,27 +308,35 @@ export default function HomeScreen({
 
         {/* Botão adicionar lista */}
         {!focusMode && (
-          <Pressable
-            onPress={openAddList}
-            borderRadius="$2xl"
-            py="$4"
-            alignItems="center"
-            mb="$3"
-            $pressed={{ opacity: 0.75 }}
-            style={{
-              borderStyle: "dashed",
-              borderWidth: isHighContrast ? 3 : 2,
-              backgroundColor: addListBg,
-              borderColor: addListBorder,
-            }}
+          <CopilotStep 
+            text="Crie sua lista aqui." 
+            order={1} 
+            name="new_list_btn"
           >
-            <Text
-              fontWeight="$bold"
-              style={{ fontSize: scaledFontSize(tokens.md), color: addListTextColor }}
+            <WalkthroughableButton>
+            <Pressable
+              onPress={openAddList}
+              borderRadius="$2xl"
+              py="$4"
+              alignItems="center"
+              mb="$3"
+              $pressed={{ opacity: 0.75 }}
+              style={{
+                borderStyle: "dashed",
+                borderWidth: isHighContrast ? 3 : 2,
+                backgroundColor: addListBg,
+                borderColor: addListBorder,
+              }}
             >
-              + Adicionar lista
-            </Text>
-          </Pressable>
+              <Text
+                fontWeight="$bold"
+                style={{ fontSize: scaledFontSize(tokens.md), color: addListTextColor }}
+              >
+                + Adicionar lista
+              </Text>
+            </Pressable>
+            </WalkthroughableButton>
+          </CopilotStep>
         )}
 
         {renderLists()}

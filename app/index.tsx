@@ -11,6 +11,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TypographyProvider } from "@context/TypographyContext";
+import { 
+  CopilotProvider, 
+  CopilotStep, 
+  walkthroughable, 
+  useCopilot 
+} from "react-native-copilot";
 
 const CURRENT_TASK_KEY = "@lumina:currentTask";
 const POMODORO_DURATION = 25 * 60;
@@ -145,12 +151,19 @@ function AppContent() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <SettingsProvider>
-        <TypographyProvider>
-          <AppContent />
-        </TypographyProvider>
-      </SettingsProvider>
-    </SafeAreaProvider>
+    <CopilotProvider labels={{
+    next: "Próximo",
+    previous: "Anterior",
+    skip: "Pular",
+    finish: "Finalizar", 
+  }}>
+      <SafeAreaProvider>
+        <SettingsProvider>
+          <TypographyProvider>
+            <AppContent />
+          </TypographyProvider>
+        </SettingsProvider>
+      </SafeAreaProvider>
+    </CopilotProvider>
   );
 }
