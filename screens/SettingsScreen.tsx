@@ -65,7 +65,11 @@ export default function SettingsScreen({
       >
         <SettingsSection
           title="Configurações"
-          subtitle="Use esta página para ajustar o aplicativo do jeito que funciona melhor para você."
+          subtitle={
+            settings.cognitiveModes.lowAttention
+              ? "Personalize o app como preferir."
+              : "Use esta página para ajustar o aplicativo do jeito que funciona melhor para você."
+          }
           content={
             <>
               <SettingsSection
@@ -99,6 +103,10 @@ export default function SettingsScreen({
                             ...settings.cognitiveModes,
                             lowAttention: val as boolean,
                           },
+                          visual: {
+                            ...settings.visual,
+                            fontSize: val ? "large" : "medium",
+                          },
                         })
                       }
                     />
@@ -107,13 +115,21 @@ export default function SettingsScreen({
               />
               <SettingsSection
                 title="Personalizações Visuais"
-                subtitle="Algumas configurações extras que podem melhorar sua experiência."
+                subtitle={
+                  settings.cognitiveModes.lowAttention
+                    ? "Configurações extras para você."
+                    : "Algumas configurações extras que podem melhorar sua experiência."
+                }
                 variant="secondary"
                 content={
                   <>
                     <SettingsOption
                       title="Tamanho da fonte"
-                      subtitle="Escolha entre os tamanhos disponíveis para deixar a leitura mais confortável."
+                      subtitle={
+                        settings.cognitiveModes.lowAttention
+                          ? "Defina o tamanho do texto."
+                          : "Escolha entre os tamanhos disponíveis para deixar a leitura mais confortável."
+                      }
                       variant="select"
                       value={settings.visual.fontSize}
                       onChange={(val) =>
@@ -134,7 +150,9 @@ export default function SettingsScreen({
                       subtitle={
                         settings.visual.highContrast
                           ? "Desative o alto contraste para usar o modo escuro."
-                          : "Minimiza o cansaço visual ao suavizar o brilho da tela."
+                          : settings.cognitiveModes.lowAttention
+                            ? "Suaviza o brilho da tela."
+                            : "Minimiza o cansaço visual ao suavizar o brilho da tela."
                       }
                       variant="toggle"
                       value={settings.visual.darkMode}
@@ -145,7 +163,9 @@ export default function SettingsScreen({
                       subtitle={
                         settings.visual.darkMode
                           ? "Desative o modo escuro para usar o alto contraste."
-                          : "Amplia a diferença entre cores e textos, facilitando a leitura."
+                          : settings.cognitiveModes.lowAttention
+                            ? "Cores mais nítidas para leitura."
+                            : "Amplia a diferença entre cores e textos, facilitando a leitura."
                       }
                       variant="toggle"
                       value={settings.visual.highContrast}
@@ -153,7 +173,11 @@ export default function SettingsScreen({
                     />
                     <SettingsOption
                       title="Passos guiados"
-                      subtitle="Apresenta dicas para ajudar você a entender cada ação dentro do app."
+                      subtitle={
+                        settings.cognitiveModes.lowAttention
+                          ? "Dicas sobre as ações do app."
+                          : "Apresenta dicas para ajudar você a entender cada ação dentro do app."
+                      }
                       variant="toggle"
                       value={settings.visual.guidedSteps}
                       onChange={(val) =>
@@ -170,13 +194,21 @@ export default function SettingsScreen({
               />
               <SettingsSection
                 title="Foco e Produtividade"
-                subtitle="Configurações para ajudar você a manter a concentração e organizar melhor seu tempo."
+                subtitle={
+                  settings.cognitiveModes.lowAttention
+                    ? "Ajustes de foco e produtividade."
+                    : "Configurações para ajudar você a manter a concentração e organizar melhor seu tempo."
+                }
                 variant="secondary"
                 content={
                   <>
                     <SettingsOption
                       title="Modo Foco"
-                      subtitle="Reduz distrações visuais para que você se concentre melhor."
+                      subtitle={
+                        settings.cognitiveModes.lowAttention
+                          ? "Menos distrações, mais foco."
+                          : "Reduz distrações visuais para que você se concentre melhor."
+                      }
                       variant="toggle"
                       value={settings.productivity.focusMode}
                       onChange={(val) =>
@@ -190,7 +222,11 @@ export default function SettingsScreen({
                     />
                     <SettingsOption
                       title="Timer Pomodoro"
-                      subtitle="Organiza seu tempo em ciclos de trabalho e pausa."
+                      subtitle={
+                        settings.cognitiveModes.lowAttention
+                          ? "Ciclos de trabalho e pausa."
+                          : "Organiza seu tempo em ciclos de trabalho e pausa."
+                      }
                       variant="toggle"
                       value={settings.productivity.pomodoroEnabled}
                       onChange={(val) =>

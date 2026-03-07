@@ -24,6 +24,7 @@ import {
   TextareaInput,
   VStack,
 } from "@gluestack-ui/themed";
+import { useSettings } from "@hooks/useSettings";
 import { useTypography } from "@hooks/useTypography";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
@@ -51,6 +52,7 @@ export default function TaskModal({
     defaultListId || lists[0]?.id || "",
   );
   const { scaledFontSize } = useTypography();
+  const { settings } = useSettings();
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -81,6 +83,29 @@ export default function TaskModal({
     }
   };
 
+  const getHeaderSubtitle = () => {
+    if (isEditing) {
+      return "Atualize os dados da sua atividade.";
+    }
+
+    if (settings.cognitiveModes.lowAttention) {
+      return "Detalhe sua tarefa.";
+    }
+
+    return "Preencha as informações para organizar sua tarefa.";
+  };
+  const getTitle = () => {
+    if (isEditing) {
+      return "Editar atividade";
+    }
+
+    if (settings.cognitiveModes.lowAttention) {
+      return "Nova atividade";
+    }
+
+    return "Adicionar uma nova atividade";
+  };
+
   return (
     <Modal isOpen={visible} onClose={onCancel} size="full">
       <ModalBackdrop />
@@ -101,14 +126,10 @@ export default function TaskModal({
           <ModalHeader px="$6" pt="$6" pb="$2">
             <VStack>
               <Text style={{fontSize: scaledFontSize(tokens.xl),}} fontWeight="$bold" color="$textLight900">
-                {isEditing
-                  ? "Editar atividade"
-                  : "Adicionar uma nova atividade"}
+                {getTitle()}
               </Text>
               <Text style={{fontSize: scaledFontSize(tokens.sm),}} color="$textLight500" mt="$1" pb="$1">
-                {isEditing
-                  ? "Atualize os dados da sua atividade."
-                  : "Preencha as informações para organizar sua tarefa."}
+                {getHeaderSubtitle()}
               </Text>
             </VStack>
           </ModalHeader>
