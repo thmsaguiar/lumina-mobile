@@ -147,7 +147,7 @@ export default function TaskModal({
         }
       if (step?.name === "new_task_desc") {
         // Adiciona descrição
-        simulateTypingDesc("Comprar café");
+        simulateTypingDesc("Comprar café Pilão no mercado do bairro");
       }
       if (step?.name === "new_task_save") {
       setTutorialFinished(true);
@@ -157,6 +157,8 @@ export default function TaskModal({
       const handleStop = () => {
     if (tutorialFinished) {
       onCancel();
+      
+      onSave(title.trim(), description.trim(), selectedListId);
       setTutorialFinished(false); 
     }};
 

@@ -124,18 +124,18 @@ useEffect(() => {
   const handleStepChange = (step: any) => {
       if (step?.name === "new_list_title_input") {
         // Adiciona titulo
-        simulateTyping("Comprar café");
+        simulateTyping("Compras da semana");
       }
-      // 2. Se o usuário chegou no último passo, marcamos como concluído
+      //
     if (step?.name === "new_list_save") {
       setTutorialFinished(true);
     }
     };
 
     const handleStop = () => {
-      console.log("handleStop - ListModal");
     if (tutorialFinished) {
       onCancel();
+      onSave(title.trim(), selectedColor);
       setTutorialFinished(false); 
     }
   };

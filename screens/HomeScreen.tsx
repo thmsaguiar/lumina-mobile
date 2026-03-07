@@ -6,6 +6,8 @@ import { useBoard } from "@context/BoardContext";
 import { useThemeColors } from "@hooks/useThemeColors";
 import {
   Box,
+  Button,
+  ButtonText,
   HStack,
   Pressable,
   ScrollView,
@@ -51,7 +53,7 @@ export default function HomeScreen({
     useThemeColors();
   const { settings } = useSettings();
   const { scaledFontSize } = useTypography();
-  const { start, copilotEvents } = useCopilot(); // Tutorial
+  const { start, copilotEvents ,goToNext} = useCopilot(); // Tutorial
 
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -60,6 +62,9 @@ export default function HomeScreen({
   const [editingList, setEditingList] = useState<TaskList | null>(null);
     const [tutorial, setTutorial] = useState<"newList" | "newTask" | null>("newList");
     const tutorialRef = useRef(tutorial);
+    const [tutorialFinished, setTutorialFinished] = useState(false);
+     const [visibility, setVisibility] = useState(false);
+    
   
 
   // Mapeamento simples de tokens
@@ -80,6 +85,10 @@ export default function HomeScreen({
     setActiveListId(listId);
     setEditingTask(null);
     setTaskModalVisible(true);
+    setTimeout(() => {
+  goToNext();
+}, 60);
+    
   };
   const openEditTask = (task: Task, listId: string) => {
     setActiveListId(listId);
@@ -193,9 +202,17 @@ export default function HomeScreen({
   tutorialRef.current = tutorial;
 }, [tutorial]);
 
+
+ const restartTutorial = () => {
+  tutorialRef.current = "newList";
+  setTutorial("newList");
+  setVisibility(false);
+};
   // Passos Guiados
   useEffect(() => {
     const handleStepChange = (step: any) => {
+      console.log(step?.name);
+      if (tutorialRef.current !== "newList") return;
       if (step?.name === "new_list_btn") {
         // Abre modal de criação
         openAddList();
@@ -206,17 +223,25 @@ export default function HomeScreen({
     return () => {
       copilotEvents.off("stepChange", handleStepChange);
     };
-  }, [copilotEvents, openAddList]); 
+  }, [copilotEvents]); 
+ 
 
-  useEffect(() => {
+useEffect(() => {
   const handleStop = () => {
-    if (tutorialRef.current === "newList") {
-      setTutorial("newTask");
 
-      setTimeout(() => {
-        start();
-      }, 400);
+    // terminou o tutorial de criar lista
+    if (tutorialRef.current === "newList") {
+      tutorialRef.current = "newTask";
+      setTutorial("newTask");
+      return;
     }
+
+    // terminou o tutorial de criar tarefa
+    if (tutorialRef.current === "newTask") {
+      setVisibility(true); // habilita botão reiniciar
+      setTutorial(null);   // encerra fluxo
+    }
+
   };
 
   copilotEvents.on("stop", handleStop);
@@ -224,7 +249,7 @@ export default function HomeScreen({
   return () => {
     copilotEvents.off("stop", handleStop);
   };
-}, []);
+}, [copilotEvents]);
 
   return (
     <SafeAreaView
@@ -263,27 +288,40 @@ export default function HomeScreen({
             }}
           >
             <HStack space="sm" alignItems="center">
-              <Text fontSize="$lg">❓</Text>
-              <VStack flex={1}>
+              <Text fontSize="$2xl">💡</Text>
+              <VStack flex={1} gap="10">
                 <Text
                   fontWeight="$medium"
                   style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}
                 >
-                  {tutorial ? (tutorial === "newTask" ? " 2/2 Precisa de ajuda para criar uma atividade?" : "1/2 Precisa de ajuda para criar uma lista?") : "1/2 Precisa de ajuda para criar uma lista?"}
+                  {visibility
+  ? "Tutorial concluído com sucesso! 🎉"
+  : tutorial === "newTask"
+  ? "2/2 Agora vamos adicionar uma tarefa a esta lista."
+  : "1/2 Vamos começar criando sua primeira lista."
+}
                 </Text>
+              
+              <HStack flex={1} gap="10">
+<Button
+                borderRadius="$xl"
+                flex={1}
+                bg={ "$primary600" } isDisabled={!visibility}
+onPress={restartTutorial}
+              >
+                <ButtonText style={{ fontSize: scaledFontSize(tokens.xs), textAlign: "center"}} >{"Reiniciar"}</ButtonText>
+              </Button>
+              <Button
+                borderRadius="$xl"
+                onPress={() => { start()}}
+                flex={1}
+                bg={ "$primary600" }
+                isDisabled={visibility}
+              >
+                <ButtonText style={{ fontSize: scaledFontSize(tokens.xs), textAlign: "center"}} >{"Iniciar"}</ButtonText>
+              </Button>
+              </HStack>
               </VStack>
-              {onClearCurrentTask && (
-
-                <Pressable
-                  onPress={() => { start()}}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  $pressed={{ opacity: 0.6 }}
-                >
-                  <Text style={{ fontSize: scaledFontSize(tokens.xs), color: helperTextColor }}>
-                     {tutorial ? (tutorial === "newTask" ? "Próximo passo" : "Iniciar tutorial") : "Iniciar tutorial"}
-                  </Text>
-                </Pressable>
-              )}
             </HStack>
           </Box>
         )}

@@ -88,9 +88,11 @@ export default function ListColumn({
     useEffect(() => {
       const handleStepChange = (step: any) => {
         if (step?.name === "new_task") {
-
-          // Abre modal de criação
+setTimeout(() => {
+        // Abre modal de criação
           onAddTask(list.id);
+      }, 400);
+          
         }
       };
       copilotEvents.on("stepChange", handleStepChange);
