@@ -22,6 +22,8 @@ import {
 import { useSettings } from "@hooks/useSettings";
 import { useTypography } from "@hooks/useTypography";
 import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
 
 const COLORS = [
   { key: "white", hex: "#F5F5F5", border: "#CCCCCC" },
@@ -33,20 +35,25 @@ const COLORS = [
 interface ListModalProps {
   visible: boolean;
   editingList?: TaskList | null;
+  tutorial?: string  | null;
   onSave: (title: string, color: string) => void;
   onCancel: () => void;
 }
+const WalkthroughableButton = walkthroughable(TouchableOpacity); // Tutorial
 
 export default function ListModal({
   visible,
   editingList,
   onSave,
   onCancel,
+  tutorial
 }: ListModalProps) {
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState("white");
+  const [tutorialFinished, setTutorialFinished] = useState(false);// Tutorial
   const { scaledFontSize } = useTypography();
   const { settings } = useSettings();
+  const { start, copilotEvents, goToNext } = useCopilot(); // Tutorial
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -101,6 +108,46 @@ export default function ListModal({
     return "Adicionar uma nova lista";
   };
 
+//Simular Digitação 
+  const simulateTyping = (text: string) => {
+  let currentText = "";
+  text.split("").forEach((char, index) => {
+    setTimeout(() => {
+      currentText += char;
+      setTitle(currentText);
+    }, 100 * index); // Digita uma letra a cada 100ms
+  });
+};
+  // Passos Guiados
+useEffect(() => {
+  
+  const handleStepChange = (step: any) => {
+      if (step?.name === "new_list_title_input") {
+        // Adiciona titulo
+        simulateTyping("Compras da semana");
+      }
+      //
+    if (step?.name === "new_list_save") {
+      setTutorialFinished(true);
+    }
+    };
+
+    const handleStop = () => {
+    if (tutorialFinished) {
+      onCancel();
+      onSave(title.trim(), selectedColor);
+      setTutorialFinished(false); 
+    }
+  };
+
+    copilotEvents.on("stepChange", handleStepChange);
+copilotEvents.on("stop", handleStop);
+  return () => {
+    copilotEvents.off("stepChange", handleStepChange);
+    copilotEvents.off("stop", handleStop);
+  };
+}, [copilotEvents, onSave, onCancel, setTitle]);
+
   return (
     <Modal isOpen={visible} onClose={onCancel} size="full">
       <ModalBackdrop />
@@ -138,6 +185,13 @@ export default function ListModal({
 
         <ModalBody px="$6" py="$4">
           <VStack space="md" py="$2">
+            <CopilotStep 
+            text="Adicione um titulo a lista." 
+            order={2} 
+            name="new_list_title_input"
+            active={tutorial === "newList"}
+          >
+            <WalkthroughableButton disabled={true}>
             {/* Título */}
             <FormControl isRequired>
               <FormControlLabel>
@@ -162,7 +216,15 @@ export default function ListModal({
                 />
               </Input>
             </FormControl>
-
+            </WalkthroughableButton>
+            </CopilotStep>
+            <CopilotStep 
+            text="Selecione uma cor para o fundo da lista." 
+            order={3} 
+            name="new_list_color_select"
+            active={tutorial === "newList"}
+          >
+            <WalkthroughableButton disabled={true}>
             {/* Cor */}
             <FormControl>
               <FormControlLabel>
@@ -194,6 +256,8 @@ export default function ListModal({
                 })}
               </HStack>
             </FormControl>
+            </WalkthroughableButton>
+            </CopilotStep>
           </VStack>
         </ModalBody>
 
@@ -209,6 +273,13 @@ export default function ListModal({
             >
               <ButtonText>Cancelar</ButtonText>
             </Button>
+            <CopilotStep 
+            text={isEditing ? "Selecione salvar para concluir" : "Selecione Adicionar para concluir"}
+            order={4} 
+            name="new_list_save"
+            active={tutorial === "newList"}
+          >
+            <WalkthroughableButton disabled={true}>
             <Button
               borderRadius="$xl"
               onPress={handleSave}
@@ -218,6 +289,8 @@ export default function ListModal({
             >
               <ButtonText>{isEditing ? "Salvar" : "Adicionar"}</ButtonText>
             </Button>
+            </WalkthroughableButton>
+            </CopilotStep>
           </HStack>
         </ModalFooter>
       </ModalContent>

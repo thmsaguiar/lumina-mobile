@@ -21,11 +21,14 @@ import {
   Plus,
   Trash2,
 } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { TaskList } from "@/interfaces/TaskList";
 import type { Task } from "@/interfaces/task";
 import { TaskCardInline } from "./TaskCardInline";
 import { useTypography } from "@hooks/useTypography";
+
+import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
+import { TouchableOpacity } from "react-native";
 
 const COLOR_MAP: Record<string, string> = {
   white: "#F5F5F5",
@@ -36,22 +39,29 @@ const COLOR_MAP: Record<string, string> = {
 
 interface ListColumnProps {
   list: TaskList;
+  tutorial?: string  | null;
   onAddTask: (listId: string) => void;
   onEditTask: (task: Task, listId: string) => void;
   onEditList: (list: TaskList) => void;
 }
+
+
+const WalkthroughableButton = walkthroughable(TouchableOpacity); // Tutorial
 
 export default function ListColumn({
   list,
   onAddTask,
   onEditTask,
   onEditList,
+  tutorial,
 }: ListColumnProps) {
   const { deleteList, deleteTask, toggleTask } = useBoard();
   const [expanded, setExpanded] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const { textPrimary, textSecondary } = useThemeColors();
   const { scaledFontSize } = useTypography();
+  
+    const { start, copilotEvents, goToNext } = useCopilot(); // Tutorial
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -73,6 +83,24 @@ export default function ListColumn({
     setMenuVisible(false);
     onEditList(list);
   };
+
+  // Passos Guiados
+    useEffect(() => {
+      const handleStepChange = (step: any) => {
+        if (step?.name === "new_task") {
+setTimeout(() => {
+        // Abre modal de criação
+          onAddTask(list.id);
+      }, 400);
+          
+        }
+      };
+      copilotEvents.on("stepChange", handleStepChange);
+  
+      return () => {
+        copilotEvents.off("stepChange", handleStepChange);
+      };
+    }, [copilotEvents, onAddTask]); 
 
   return (
     <Box
@@ -129,6 +157,13 @@ export default function ListColumn({
               onToggle={() => toggleTask(task.id, list.id)}
             />
           ))}
+         <CopilotStep 
+            text="Adicione atividade a lista." 
+            order={1} 
+            name="new_task"
+            active={tutorial === "newTask"}
+          >
+            <WalkthroughableButton disabled={true}>
           <Pressable onPress={() => onAddTask(list.id)} py="$3">
             <HStack alignItems="center" justifyContent="center" space="xs">
               <Icon as={Plus} size="xs" color="$textLight500" />
@@ -137,9 +172,11 @@ export default function ListColumn({
               </Text>
             </HStack>
           </Pressable>
+          
+</WalkthroughableButton>
+</CopilotStep>
         </Box>
       )}
-
       {/* Menu dropdown */}
       <Modal
         isOpen={menuVisible}

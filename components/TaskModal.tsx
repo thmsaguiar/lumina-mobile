@@ -28,15 +28,21 @@ import { useSettings } from "@hooks/useSettings";
 import { useTypography } from "@hooks/useTypography";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
+import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
+import { TouchableOpacity } from "react-native";
 
 interface TaskModalProps {
   visible: boolean;
   lists: TaskList[];
   defaultListId?: string;
   editingTask?: Task | null;
+  tutorial?: string  | null;
   onSave: (title: string, description: string, listId: string) => void;
   onCancel: () => void;
 }
+
+
+const WalkthroughableButton = walkthroughable(TouchableOpacity); // Tutorial
 
 export default function TaskModal({
   visible,
@@ -45,6 +51,7 @@ export default function TaskModal({
   editingTask,
   onSave,
   onCancel,
+  tutorial
 }: TaskModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -53,6 +60,10 @@ export default function TaskModal({
   );
   const { scaledFontSize } = useTypography();
   const { settings } = useSettings();
+  
+    const { start, copilotEvents, goToNext } = useCopilot(); // Tutorial
+    
+      const [tutorialFinished, setTutorialFinished] = useState(false);// Tutorial
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -106,6 +117,59 @@ export default function TaskModal({
     return "Adicionar uma nova atividade";
   };
 
+  //Simular Digitação 
+    const simulateTyping = (text: string) => {
+    let currentText = "";
+    text.split("").forEach((char, index) => {
+      setTimeout(() => {
+        currentText += char;
+        setTitle(currentText);
+      }, 100 * index); // Digita uma letra a cada 100ms
+    });
+  };
+  //Simular Digitação 
+    const simulateTypingDesc = (text: string) => {
+    let currentText = "";
+    text.split("").forEach((char, index) => {
+      setTimeout(() => {
+        currentText += char;
+        setDescription(currentText);
+      }, 100 * index); // Digita uma letra a cada 100ms
+    });
+  };
+    // Passos Guiados
+  useEffect(() => {
+    
+    const handleStepChange = (step: any) => {
+        if (step?.name === "new_task_input") {
+          // Adiciona titulo
+          simulateTyping("Comprar café");
+        }
+      if (step?.name === "new_task_desc") {
+        // Adiciona descrição
+        simulateTypingDesc("Comprar café Pilão no mercado do bairro");
+      }
+      if (step?.name === "new_task_save") {
+      setTutorialFinished(true);
+    }
+      };
+  
+      const handleStop = () => {
+    if (tutorialFinished) {
+      onCancel();
+      
+      onSave(title.trim(), description.trim(), selectedListId);
+      setTutorialFinished(false); 
+    }};
+
+      copilotEvents.on("stepChange", handleStepChange);
+  copilotEvents.on("stop", handleStop);
+    return () => {
+      copilotEvents.off("stepChange", handleStepChange);
+      copilotEvents.off("stop", handleStop);
+    };
+  }, [copilotEvents, onSave, onCancel, setTitle]);
+
   return (
     <Modal isOpen={visible} onClose={onCancel} size="full">
       <ModalBackdrop />
@@ -142,6 +206,13 @@ export default function TaskModal({
               keyboardShouldPersistTaps="handled"
             >
               <VStack space="md" p="$1">
+                 <CopilotStep 
+                            text="Adicione titulo a atividade." 
+                            order={2} 
+                            name="new_task_input"
+                            active={tutorial === "newTask"}
+                          >
+                            <WalkthroughableButton disabled={true}>
                 {/* Título */}
                 <FormControl isRequired>
                   <FormControlLabel>
@@ -163,7 +234,16 @@ export default function TaskModal({
                     />
                   </Input>
                 </FormControl>
+                </WalkthroughableButton>
+                </CopilotStep>
 
+<CopilotStep 
+                            text="Adicione uma descrição para a atividade." 
+                            order={3} 
+                            name="new_task_desc"
+                            active={tutorial === "newTask"}
+                          >
+                            <WalkthroughableButton disabled={true}>
                 {/* Descrição */}
                 <FormControl>
                   <FormControlLabel>
@@ -185,7 +265,15 @@ export default function TaskModal({
                     />
                   </Textarea>
                 </FormControl>
-
+</WalkthroughableButton>
+                </CopilotStep>
+                <CopilotStep 
+                            text="Associe a atividade a uma lista." 
+                            order={4} 
+                            name="new_task_list"
+                            active={tutorial === "newTask"}
+                          >
+                            <WalkthroughableButton disabled={true}>
                 {/* Lista */}
                 <FormControl isRequired>
                   <FormControlLabel>
@@ -223,6 +311,8 @@ export default function TaskModal({
                     })}
                   </VStack>
                 </FormControl>
+                </WalkthroughableButton>
+                </CopilotStep>
               </VStack>
             </ScrollView>
           </ModalBody>
@@ -239,6 +329,13 @@ export default function TaskModal({
               >
                 <ButtonText>Cancelar</ButtonText>
               </Button>
+              <CopilotStep 
+                            text="Salve para finalizar." 
+                            order={5} 
+                            name="new_task_save"
+                            active={tutorial === "newTask"}
+                          >
+                            <WalkthroughableButton disabled={true}>
               <Button
                 borderRadius="$xl"
                 onPress={handleSave}
@@ -248,6 +345,8 @@ export default function TaskModal({
               >
                 <ButtonText>{isEditing ? "Salvar" : "Adicionar"}</ButtonText>
               </Button>
+              </WalkthroughableButton>
+                </CopilotStep>
             </HStack>
           </ModalFooter>
         </KeyboardAvoidingView>
