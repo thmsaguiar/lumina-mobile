@@ -94,7 +94,7 @@ export default function AppHeader({
                 <Text fontSize="$sm">🍎</Text>
                 <Text
                   fontWeight="$semibold"
-                  style={{ fontSize: scaledFontSize(tokens.sm), color: textPrimary }}
+                  style={{ fontSize: scaledFontSize(tokens.xs), color: textPrimary }}
                 >
                   {formatTime(pomodoroSeconds)}
                 </Text>
@@ -115,7 +115,7 @@ export default function AppHeader({
             >
               <HStack space="xs" alignItems="center">
                 <Text style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}>
-                  Modo foco:{" "}
+                  Foco:{" "}
                 </Text>
                 <Text
                   fontWeight="$bold"
