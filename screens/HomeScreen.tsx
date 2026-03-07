@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Settings, StatusBar, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Task } from "@/interfaces/task";
@@ -51,14 +51,15 @@ export default function HomeScreen({
     useThemeColors();
   const { settings } = useSettings();
   const { scaledFontSize } = useTypography();
-  const { start, copilotEvents, goToNext } = useCopilot(); // Tutorial
+  const { start, copilotEvents } = useCopilot(); // Tutorial
 
   const [taskModalVisible, setTaskModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeListId, setActiveListId] = useState<string>("");
   const [listModalVisible, setListModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<TaskList | null>(null);
-  
+    const [tutorial, setTutorial] = useState<"newList" | "newTask" | null>("newList");
+    const tutorialRef = useRef(tutorial);
   
 
   // Mapeamento simples de tokens
@@ -174,6 +175,8 @@ export default function HomeScreen({
       );
     }
 
+    
+
     return targetLists.map((list) => (
       <ListColumn
         key={list.id}
@@ -181,9 +184,14 @@ export default function HomeScreen({
         onAddTask={openAddTask}
         onEditTask={openEditTask}
         onEditList={openEditList}
+        tutorial={tutorial}
       />
     ));
   };
+
+  useEffect(() => {
+  tutorialRef.current = tutorial;
+}, [tutorial]);
 
   // Passos Guiados
   useEffect(() => {
@@ -199,6 +207,24 @@ export default function HomeScreen({
       copilotEvents.off("stepChange", handleStepChange);
     };
   }, [copilotEvents, openAddList]); 
+
+  useEffect(() => {
+  const handleStop = () => {
+    if (tutorialRef.current === "newList") {
+      setTutorial("newTask");
+
+      setTimeout(() => {
+        start();
+      }, 400);
+    }
+  };
+
+  copilotEvents.on("stop", handleStop);
+
+  return () => {
+    copilotEvents.off("stop", handleStop);
+  };
+}, []);
 
   return (
     <SafeAreaView
@@ -243,18 +269,18 @@ export default function HomeScreen({
                   fontWeight="$medium"
                   style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}
                 >
-                  Precisa de ajuda para criar uma lista?
+                  {tutorial ? (tutorial === "newTask" ? " 2/2 Precisa de ajuda para criar uma atividade?" : "1/2 Precisa de ajuda para criar uma lista?") : "1/2 Precisa de ajuda para criar uma lista?"}
                 </Text>
               </VStack>
               {onClearCurrentTask && (
 
                 <Pressable
-                  onPress={() => start()}
+                  onPress={() => { start()}}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   $pressed={{ opacity: 0.6 }}
                 >
                   <Text style={{ fontSize: scaledFontSize(tokens.xs), color: helperTextColor }}>
-                    Iniciar tutorial
+                     {tutorial ? (tutorial === "newTask" ? "Próximo passo" : "Iniciar tutorial") : "Iniciar tutorial"}
                   </Text>
                 </Pressable>
               )}
@@ -312,6 +338,7 @@ export default function HomeScreen({
             text="Crie sua lista aqui." 
             order={1} 
             name="new_list_btn"
+            active={tutorial === "newList"}
           >
             <WalkthroughableButton>
             <Pressable
@@ -352,6 +379,7 @@ export default function HomeScreen({
           setTaskModalVisible(false);
           setEditingTask(null);
         }}
+        tutorial={tutorial}
       />
       <ListModal
         visible={listModalVisible}
@@ -361,6 +389,7 @@ export default function HomeScreen({
           setListModalVisible(false);
           setEditingList(null);
         }}
+        tutorial={tutorial}
       />
     </SafeAreaView>
   );

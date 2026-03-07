@@ -35,6 +35,7 @@ const COLORS = [
 interface ListModalProps {
   visible: boolean;
   editingList?: TaskList | null;
+  tutorial?: string  | null;
   onSave: (title: string, color: string) => void;
   onCancel: () => void;
 }
@@ -45,6 +46,7 @@ export default function ListModal({
   editingList,
   onSave,
   onCancel,
+  tutorial
 }: ListModalProps) {
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState("white");
@@ -131,6 +133,7 @@ useEffect(() => {
     };
 
     const handleStop = () => {
+      console.log("handleStop - ListModal");
     if (tutorialFinished) {
       onCancel();
       setTutorialFinished(false); 
@@ -186,6 +189,7 @@ copilotEvents.on("stop", handleStop);
             text="Adicione um titulo a lista." 
             order={2} 
             name="new_list_title_input"
+            active={tutorial === "newList"}
           >
             <WalkthroughableButton disabled={true}>
             {/* Título */}
@@ -218,6 +222,7 @@ copilotEvents.on("stop", handleStop);
             text="Selecione uma cor para o fundo da lista." 
             order={3} 
             name="new_list_color_select"
+            active={tutorial === "newList"}
           >
             <WalkthroughableButton disabled={true}>
             {/* Cor */}
@@ -272,6 +277,7 @@ copilotEvents.on("stop", handleStop);
             text={isEditing ? "Selecione salvar para concluir" : "Selecione Adicionar para concluir"}
             order={4} 
             name="new_list_save"
+            active={tutorial === "newList"}
           >
             <WalkthroughableButton disabled={true}>
             <Button
