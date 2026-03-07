@@ -3,6 +3,7 @@ import { useThemeColors } from "@hooks/useThemeColors";
 import { useSettings } from "@hooks/useSettings";
 import { Settings } from "lucide-react-native";
 import React from "react";
+import { useTypography } from "@hooks/useTypography";
 
 interface AppHeaderProps {
   focusMode: boolean;
@@ -35,6 +36,17 @@ export default function AppHeader({
     textPrimary,
     textSecondary,
   } = useThemeColors();
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
@@ -81,13 +93,12 @@ export default function AppHeader({
               <HStack space="xs" alignItems="center">
                 <Text fontSize="$sm">🍎</Text>
                 <Text
-                  fontSize="$sm"
                   fontWeight="$semibold"
-                  style={{ color: textPrimary }}
+                  style={{ fontSize: scaledFontSize(tokens.sm), color: textPrimary }}
                 >
                   {formatTime(pomodoroSeconds)}
                 </Text>
-                <Text fontSize="$xs" style={{ color: textSecondary }}>
+                <Text style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}>
                   {pomodoroRunning ? "⏸" : "▶"}
                 </Text>
               </HStack>
@@ -103,13 +114,12 @@ export default function AppHeader({
               style={buttonStyle}
             >
               <HStack space="xs" alignItems="center">
-                <Text fontSize="$xs" style={{ color: textSecondary }}>
+                <Text style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}>
                   Modo foco:{" "}
                 </Text>
                 <Text
-                  fontSize="$xs"
                   fontWeight="$bold"
-                  style={{ color: focusStatusColor }}
+                  style={{ fontSize: scaledFontSize(tokens.xs), color: focusStatusColor }}
                 >
                   {focusMode ? "ativado" : "desativado"}
                 </Text>

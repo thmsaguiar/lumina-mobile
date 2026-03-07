@@ -1,4 +1,4 @@
-import type { TaskList } from "@/context/BoardContext";
+import type { TaskList } from "@/interfaces/TaskList";
 import {
   Button,
   ButtonText,
@@ -19,6 +19,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useTypography } from "@hooks/useTypography";
 import React, { useEffect, useState } from "react";
 
 const COLORS = [
@@ -43,6 +44,17 @@ export default function ListModal({
 }: ListModalProps) {
   const [title, setTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState("white");
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   const isEditing = !!editingList;
 
@@ -80,10 +92,10 @@ export default function ListModal({
       >
         <ModalHeader px="$6" pt="$6" pb="$2">
           <VStack>
-            <Text fontSize="$xl" fontWeight="$bold" color="$textLight900">
+            <Text style={{fontSize: scaledFontSize(tokens.xl),}} fontWeight="$bold" color="$textLight900">
               {isEditing ? "Editar lista" : "Adicionar uma nova lista"}
             </Text>
-            <Text fontSize="$sm" color="$textLight500" mt="$1">
+            <Text style={{fontSize: scaledFontSize(tokens.sm),}} color="$textLight500" mt="$1">
               {isEditing
                 ? "Atualize o título e a cor da sua lista."
                 : "Crie uma nova lista para organizar suas atividades."}
@@ -99,7 +111,7 @@ export default function ListModal({
             <FormControl isRequired>
               <FormControlLabel>
                 <FormControlLabelText
-                  fontSize="$sm"
+                  style={{fontSize: scaledFontSize(tokens.sm),}}
                   fontWeight="$semibold"
                   color="$textLight600"
                 >
@@ -112,8 +124,7 @@ export default function ListModal({
                   placeholderTextColor="#AAAAAA"
                   value={title}
                   onChangeText={setTitle}
-                  fontSize="$sm"
-                  style={{ color: "#1A1A1A" }}
+                  style={{fontSize: scaledFontSize(tokens.sm),color: "#1A1A1A"} }
                 />
               </Input>
             </FormControl>
@@ -122,7 +133,7 @@ export default function ListModal({
             <FormControl>
               <FormControlLabel>
                 <FormControlLabelText
-                  fontSize="$sm"
+                  style={{fontSize: scaledFontSize(tokens.sm),}}
                   fontWeight="$semibold"
                   color="$textLight600"
                 >

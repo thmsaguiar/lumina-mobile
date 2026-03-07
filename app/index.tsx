@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { TypographyProvider } from "@context/TypographyContext";
 
 const CURRENT_TASK_KEY = "@lumina:currentTask";
 const POMODORO_DURATION = 25 * 60;
@@ -146,7 +147,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SettingsProvider>
-        <AppContent />
+        <TypographyProvider>
+          <AppContent />
+        </TypographyProvider>
       </SettingsProvider>
     </SafeAreaProvider>
   );

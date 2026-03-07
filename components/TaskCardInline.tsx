@@ -8,6 +8,7 @@ import {
   VStack,
 } from "@gluestack-ui/themed";
 import { useClearReading } from "@hooks/useClearReading";
+import { useTypography } from "@hooks/useTypography";
 
 import React from "react";
 
@@ -30,6 +31,17 @@ export function TaskCardInline({
     Trash2,
   } = require("lucide-react-native");
   const { isClearReading } = useClearReading();
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   return (
     <Box
@@ -54,7 +66,7 @@ export function TaskCardInline({
 
         <VStack flex={1}>
           <Text
-            fontSize="$sm"
+            style={{fontSize: scaledFontSize(tokens.sm),}}
             fontWeight="$semibold"
             color={task.completed ? "$textLight400" : "$textLight900"}
             strikeThrough={task.completed}
@@ -64,7 +76,7 @@ export function TaskCardInline({
          
           {!isClearReading && task.description ? (
             <Text
-              fontSize="$xs"
+              style={{fontSize: scaledFontSize(tokens.xs),}}
               color={task.completed ? "$textLight300" : "$textLight500"}
               strikeThrough={task.completed}
               mt="$0.5"
@@ -90,7 +102,7 @@ export function TaskCardInline({
               <VStack alignItems="center" space="xs">
                 <Icon as={Edit2} size="xs" style={{ color: "#2A6496" }} />
                 <Text
-                  style={{ fontSize: 10, color: "#2A6496", fontWeight: "600" }}
+                  style={{ fontSize: scaledFontSize(tokens.custom), color: "#2A6496", fontWeight: "600" }}
                 >
                   Editar
                 </Text>
@@ -111,7 +123,7 @@ export function TaskCardInline({
             <VStack alignItems="center" space="xs">
               <Icon as={Trash2} size="xs" style={{ color: "#8B2020" }} />
               <Text
-                style={{ fontSize: 10, color: "#8B2020", fontWeight: "600" }}
+                style={{ fontSize: scaledFontSize(tokens.custom), color: "#8B2020", fontWeight: "600" }}
               >
                 Excluir
               </Text>

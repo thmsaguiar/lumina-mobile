@@ -25,6 +25,7 @@ import React, { useState } from "react";
 import type { TaskList } from "@/interfaces/TaskList";
 import type { Task } from "@/interfaces/task";
 import { TaskCardInline } from "./TaskCardInline";
+import { useTypography } from "@hooks/useTypography";
 
 const COLOR_MAP: Record<string, string> = {
   white: "#F5F5F5",
@@ -50,6 +51,17 @@ export default function ListColumn({
   const [expanded, setExpanded] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const { textPrimary, textSecondary } = useThemeColors();
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   const bgColor = COLOR_MAP[list.color || "white"] ?? "#F5F5F5";
 
@@ -76,7 +88,7 @@ export default function ListColumn({
         alignItems="center"
         justifyContent="space-between"
       >
-        <Text fontSize="$md" fontWeight="$bold" color="$textLight900" flex={1}>
+        <Text style={{fontSize: scaledFontSize(tokens.md),}} fontWeight="$bold" color="$textLight900" flex={1}>
           {list.title}{" "}
           <Text fontWeight="$normal" color="$textLight500">
             ({list.tasks.length})
@@ -120,7 +132,7 @@ export default function ListColumn({
           <Pressable onPress={() => onAddTask(list.id)} py="$3">
             <HStack alignItems="center" justifyContent="center" space="xs">
               <Icon as={Plus} size="xs" color="$textLight500" />
-              <Text fontSize="$sm" fontWeight="$medium" color="$textLight500">
+              <Text style={{fontSize: scaledFontSize(tokens.sm),}} fontWeight="$medium" color="$textLight500">
                 Adicionar atividade
               </Text>
             </HStack>
@@ -147,9 +159,8 @@ export default function ListColumn({
               <HStack space="md" alignItems="center">
                 <Icon as={Pencil} size="sm" color="$textLight700" />
                 <Text
-                  fontSize="$md"
+                  style={{fontSize: scaledFontSize(tokens.md), color: textPrimary}}
                   fontWeight="$medium"
-                  style={{ color: textPrimary }}
                 >
                   Editar lista
                 </Text>
@@ -165,7 +176,7 @@ export default function ListColumn({
             >
               <HStack space="md" alignItems="center">
                 <Icon as={Trash2} size="sm" color="$error600" />
-                <Text fontSize="$md" fontWeight="$medium" color="$error600">
+                <Text style={{fontSize: scaledFontSize(tokens.md),}} fontWeight="$medium" color="$error600">
                   Remover lista
                 </Text>
               </HStack>
