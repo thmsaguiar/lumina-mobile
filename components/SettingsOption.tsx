@@ -14,6 +14,7 @@ import {
   VStack,
 } from "@gluestack-ui/themed";
 import { useThemeColors } from "@hooks/useThemeColors";
+import { useTypography } from "@hooks/useTypography";
 import React from "react";
 
 type OptionVariant = "toggle" | "select";
@@ -39,14 +40,25 @@ export default function SettingsOption<
 }: Readonly<SettingsOptionProps<T>>) {
   const isToggle = variant === "toggle";
   const { textPrimary, textSecondary } = useThemeColors();
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   return (
     <HStack justifyContent="space-between" alignItems="center" mb="$2">
       <VStack flex={1} mr="$3">
-        <Text fontSize="$md" style={{ color: textPrimary }}>
+        <Text style={{fontSize: scaledFontSize(tokens.md),color: textPrimary}} >
           {title}
         </Text>
-        <Text fontSize="$sm" style={{ color: textSecondary }}>
+        <Text style={{fontSize: scaledFontSize(tokens.sm),color: textSecondary}}>
           {subtitle}
         </Text>
       </VStack>
@@ -65,6 +77,7 @@ export default function SettingsOption<
         >
           <SelectTrigger w={150}>
             <SelectInput
+            style={{fontSize: scaledFontSize(tokens.sm),}}
               value={
                 value == null
                   ? ""

@@ -1,4 +1,4 @@
-import type { Task } from "@context/BoardContext";
+import type { Task } from "@/interfaces/task";
 import {
   Box,
   HStack,
@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
 } from "@gluestack-ui/themed";
+import { useTypography } from "@hooks/useTypography";
 import { CheckCircle2, Circle, Edit2, Trash2 } from "lucide-react-native";
 import React from "react";
 
@@ -23,6 +24,18 @@ export default function TaskCard({
   onEdit,
   onDelete,
 }: TaskCardProps) {
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
+  
   return (
     <Box
       bg="$white"
@@ -48,7 +61,7 @@ export default function TaskCard({
         {/* Texto */}
         <VStack flex={1}>
           <Text
-            fontSize="$sm"
+            style={{fontSize: scaledFontSize(tokens.sm),}}
             fontWeight="$semibold"
             color={task.completed ? "$textLight400" : "$textLight900"}
             strikeThrough={task.completed}
@@ -57,7 +70,7 @@ export default function TaskCard({
           </Text>
           {task.description ? (
             <Text
-              fontSize="$xs"
+              style={{fontSize: scaledFontSize(tokens.xs),}}
               color={task.completed ? "$textLight300" : "$textLight500"}
               strikeThrough={task.completed}
               mt="$0.5"
@@ -73,7 +86,7 @@ export default function TaskCard({
             <Pressable onPress={() => onEdit(task)}>
               <VStack alignItems="center" space="xs">
                 <Icon as={Edit2} size="sm" color="$textLight500" />
-                <Text fontSize="$2xs" color="$textLight500">
+                <Text style={{fontSize: scaledFontSize(tokens.custom),}} color="$textLight500">
                   Editar
                 </Text>
               </VStack>
@@ -82,7 +95,7 @@ export default function TaskCard({
           <Pressable onPress={() => onDelete(task.id)}>
             <VStack alignItems="center" space="xs">
               <Icon as={Trash2} size="sm" color="$textLight500" />
-              <Text fontSize="$2xs" color="$textLight500">
+              <Text style={{fontSize: scaledFontSize(tokens.custom),}} color="$textLight500">
                 Excluir
               </Text>
             </VStack>

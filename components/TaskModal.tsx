@@ -24,6 +24,7 @@ import {
   TextareaInput,
   VStack,
 } from "@gluestack-ui/themed";
+import { useTypography } from "@hooks/useTypography";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
 
@@ -49,6 +50,17 @@ export default function TaskModal({
   const [selectedListId, setSelectedListId] = useState(
     defaultListId || lists[0]?.id || "",
   );
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   const isEditing = !!editingTask;
 
@@ -88,12 +100,12 @@ export default function TaskModal({
         >
           <ModalHeader px="$6" pt="$6" pb="$2">
             <VStack>
-              <Text fontSize="$xl" fontWeight="$bold" color="$textLight900">
+              <Text style={{fontSize: scaledFontSize(tokens.xl),}} fontWeight="$bold" color="$textLight900">
                 {isEditing
                   ? "Editar atividade"
                   : "Adicionar uma nova atividade"}
               </Text>
-              <Text fontSize="$sm" color="$textLight500" mt="$1" pb="$1">
+              <Text style={{fontSize: scaledFontSize(tokens.sm),}} color="$textLight500" mt="$1" pb="$1">
                 {isEditing
                   ? "Atualize os dados da sua atividade."
                   : "Preencha as informações para organizar sua tarefa."}
@@ -113,7 +125,7 @@ export default function TaskModal({
                 <FormControl isRequired>
                   <FormControlLabel>
                     <FormControlLabelText
-                      fontSize="$sm"
+                      style={{fontSize: scaledFontSize(tokens.sm),}}
                       fontWeight="$semibold"
                       color="$textLight600"
                     >
@@ -126,8 +138,7 @@ export default function TaskModal({
                       placeholderTextColor="#AAAAAA"
                       value={title}
                       onChangeText={setTitle}
-                      fontSize="$sm"
-                      style={{ color: "#1A1A1A" }}
+                      style={{fontSize: scaledFontSize(tokens.sm), color: "#1A1A1A"}}
                     />
                   </Input>
                 </FormControl>
@@ -136,7 +147,7 @@ export default function TaskModal({
                 <FormControl>
                   <FormControlLabel>
                     <FormControlLabelText
-                      fontSize="$sm"
+                      style={{fontSize: scaledFontSize(tokens.sm),}}
                       fontWeight="$semibold"
                       color="$textLight600"
                     >
@@ -149,8 +160,7 @@ export default function TaskModal({
                       placeholderTextColor="#AAAAAA"
                       value={description}
                       onChangeText={setDescription}
-                      fontSize="$sm"
-                      style={{ color: "#1A1A1A" }}
+                      style={{fontSize: scaledFontSize(tokens.sm), color: "#1A1A1A"}}
                     />
                   </Textarea>
                 </FormControl>
@@ -159,7 +169,7 @@ export default function TaskModal({
                 <FormControl isRequired>
                   <FormControlLabel>
                     <FormControlLabelText
-                      fontSize="$sm"
+                      style={{fontSize: scaledFontSize(tokens.sm),}}
                       fontWeight="$semibold"
                       color="$textLight600"
                     >
@@ -181,7 +191,7 @@ export default function TaskModal({
                           py="$3"
                         >
                           <Text
-                            fontSize="$sm"
+                            style={{fontSize: scaledFontSize(tokens.sm),}}
                             fontWeight={selected ? "$bold" : "$medium"}
                             color={selected ? "$primary700" : "$textLight700"}
                           >

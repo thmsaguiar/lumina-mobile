@@ -17,6 +17,7 @@ import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Task } from "@/interfaces/task";
 import type { TaskList } from "@/interfaces/TaskList";
+import { useTypography } from "@hooks/useTypography";
 
 interface HomeScreenProps {
   currentTask?: string;
@@ -50,6 +51,18 @@ export default function HomeScreen({
   const [activeListId, setActiveListId] = useState<string>("");
   const [listModalVisible, setListModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<TaskList | null>(null);
+
+  const { scaledFontSize } = useTypography();
+
+  // Mapeamento simples de tokens
+  const tokens = {
+    custom: 10,
+    sm: 14,
+    md: 16,
+    xs: 12,
+    lg: 18,
+    xl: 20,
+  };
 
   const focusLists = focusMode
     ? lists.filter((l) => l.tasks.some((t) => !t.completed))
@@ -122,18 +135,16 @@ export default function HomeScreen({
             {focusMode ? "🎉" : "📋"}
           </Text>
           <Text
-            fontSize="$md"
             fontWeight="$semibold"
             textAlign="center"
-            style={{ color: textSecondary }}
+            style={{ fontSize: scaledFontSize(tokens.md), color: textSecondary }}
           >
             {focusMode ? "Nenhuma tarefa em aberto!" : "Nenhuma lista ainda"}
           </Text>
           <Text
-            fontSize="$sm"
             textAlign="center"
             mt="$1"
-            style={{ color: textSecondary }}
+            style={{ fontSize: scaledFontSize(tokens.sm), color: textSecondary }}
           >
             {focusMode
               ? "Todas as suas tarefas estão concluídas."
@@ -193,17 +204,15 @@ export default function HomeScreen({
               <Text fontSize="$lg">🎯</Text>
               <VStack flex={1}>
                 <Text
-                  fontSize="$xs"
                   fontWeight="$medium"
-                  style={{ color: textSecondary }}
+                  style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}
                 >
                   Foco atual
                 </Text>
                 <Text
-                  fontSize="$sm"
                   fontWeight="$bold"
                   numberOfLines={2}
-                  style={{ color: bannerTextColor }}
+                  style={{ fontSize: scaledFontSize(tokens.sm), color: bannerTextColor }}
                 >
                   {currentTask}
                 </Text>
@@ -214,7 +223,7 @@ export default function HomeScreen({
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   $pressed={{ opacity: 0.6 }}
                 >
-                  <Text fontSize="$xs" style={{ color: textSecondary }}>
+                  <Text style={{ fontSize: scaledFontSize(tokens.xs), color: textSecondary }}>
                     ✕
                   </Text>
                 </Pressable>
@@ -240,9 +249,8 @@ export default function HomeScreen({
             }}
           >
             <Text
-              fontSize="$md"
               fontWeight="$bold"
-              style={{ color: addListTextColor }}
+              style={{ fontSize: scaledFontSize(tokens.md), color: addListTextColor }}
             >
               + Adicionar lista
             </Text>
