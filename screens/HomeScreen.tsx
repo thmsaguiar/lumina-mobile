@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { Settings, StatusBar, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { Task } from "@/interfaces/task";
+import type { Task } from "@/interfaces/Task";
 import type { TaskList } from "@/interfaces/TaskList";
 import { useTypography } from "@hooks/useTypography";
 import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";

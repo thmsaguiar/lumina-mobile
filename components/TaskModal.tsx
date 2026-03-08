@@ -1,4 +1,4 @@
-import type { Task } from "@/interfaces/task";
+import type { Task } from "@/interfaces/Task";
 import type { TaskList } from "@/interfaces/TaskList";
 import {
   Box,
