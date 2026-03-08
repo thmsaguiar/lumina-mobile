@@ -60,9 +60,8 @@ export default function HomeScreen({
   const [activeListId, setActiveListId] = useState<string>("");
   const [listModalVisible, setListModalVisible] = useState(false);
   const [editingList, setEditingList] = useState<TaskList | null>(null);
-    const [tutorial, setTutorial] = useState<"newList" | "newTask" | null>("newList");
+    const [tutorial, setTutorial] = useState<"newList" | "newTask" | "focusMode" | null>("newList");
     const tutorialRef = useRef(tutorial);
-    const [tutorialFinished, setTutorialFinished] = useState(false);
      const [visibility, setVisibility] = useState(false);
     
   
@@ -238,6 +237,14 @@ useEffect(() => {
 
     // terminou o tutorial de criar tarefa
     if (tutorialRef.current === "newTask") {
+      tutorialRef.current = "focusMode";
+      setTutorial("focusMode");
+      return;
+    }
+
+    // terminou o tutorial do modo foco
+    if (tutorialRef.current === "focusMode") {
+      onToggleFocus();
       setVisibility(true); // habilita botão reiniciar
       setTutorial(null);   // encerra fluxo
     }
@@ -250,6 +257,28 @@ useEffect(() => {
     copilotEvents.off("stop", handleStop);
   };
 }, [copilotEvents]);
+
+
+
+// Passos Guiados
+    useEffect(() => {
+      const handleStepChange = (step: any) => {
+        if (step?.name === "focus_mode_on") {
+setTimeout(() => {
+        // Ativa modo foco
+        if(onToggleFocus){
+          onToggleFocus();
+        }
+      }, 400);
+          
+        }
+      };
+      copilotEvents.on("stepChange", handleStepChange);
+  
+      return () => {
+        copilotEvents.off("stepChange", handleStepChange);
+      };
+    }, [copilotEvents, onToggleFocus]); 
 
   return (
     <SafeAreaView
@@ -267,6 +296,7 @@ useEffect(() => {
         pomodoroRunning={pomodoroRunning}
         onTogglePomodoro={onTogglePomodoro}
         onOpenSettings={onOpenSettings}
+        tutorial={tutorial}
       />
 
       <ScrollView
@@ -288,7 +318,7 @@ useEffect(() => {
             }}
           >
             <HStack space="sm" alignItems="center">
-              <Text fontSize="$2xl">💡</Text>
+              <Text fontSize="$2xl">{visibility ? "🎉" : "💡" }</Text>
               <VStack flex={1} gap="10">
                 <Text
                   fontWeight="$medium"
@@ -297,8 +327,10 @@ useEffect(() => {
                   {visibility
   ? "Tutorial concluído com sucesso! 🎉"
   : tutorial === "newTask"
-  ? "2/2 Agora vamos adicionar uma tarefa a esta lista."
-  : "1/2 Vamos começar criando sua primeira lista."
+  ? "2/3 Agora vamos adicionar uma tarefa a esta lista."
+  : tutorial === "focusMode"
+  ? "3/3 Para finalizar vamos ativar o modo foco."
+  : "1/3 Vamos começar criando sua primeira lista."
 }
                 </Text>
               
@@ -403,8 +435,16 @@ onPress={restartTutorial}
             </WalkthroughableButton>
           </CopilotStep>
         )}
-
+<CopilotStep 
+                        text="Agora suas atividades podem ser vistas sem distrações." 
+                        order={2} 
+                        name="focus_mode_lista"
+                        active={tutorial === "focusMode"}
+                      >
+                        <WalkthroughableButton>
         {renderLists()}
+        </WalkthroughableButton>
+        </CopilotStep>
       </ScrollView>
 
       <TaskModal
@@ -419,6 +459,7 @@ onPress={restartTutorial}
         }}
         tutorial={tutorial}
       />
+
       <ListModal
         visible={listModalVisible}
         editingList={editingList}

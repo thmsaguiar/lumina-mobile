@@ -2,8 +2,10 @@ import { Box, HStack, Icon, Pressable, Text } from "@gluestack-ui/themed";
 import { useThemeColors } from "@hooks/useThemeColors";
 import { useSettings } from "@hooks/useSettings";
 import { Settings } from "lucide-react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTypography } from "@hooks/useTypography";
+import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
+import {  TouchableOpacity } from "react-native";
 
 interface AppHeaderProps {
   focusMode: boolean;
@@ -14,7 +16,10 @@ interface AppHeaderProps {
   pomodoroRunning: boolean;
   onTogglePomodoro: () => void;
   onOpenSettings: () => void;
+  tutorial?: string  | null;
 }
+
+const WalkthroughableButton = walkthroughable(TouchableOpacity); // Tutorial
 
 export default function AppHeader({
   focusMode,
@@ -25,6 +30,7 @@ export default function AppHeader({
   pomodoroRunning,
   onTogglePomodoro,
   onOpenSettings,
+  tutorial,
 }: AppHeaderProps) {
   const { settings } = useSettings();
   const {
@@ -37,6 +43,9 @@ export default function AppHeader({
     textSecondary,
   } = useThemeColors();
   const { scaledFontSize } = useTypography();
+
+  const { start, copilotEvents ,goToNext} = useCopilot(); // Tutorial
+
 
   // Mapeamento simples de tokens
   const tokens = {
@@ -70,6 +79,8 @@ export default function AppHeader({
     : focusMode
       ? "#16a34a"
       : "#dc2626";
+
+
 
   return (
     <Box
@@ -107,6 +118,13 @@ export default function AppHeader({
 
           {/* Modo foco */}
           {focusEnabled && settings.productivity.focusMode && (
+            <CopilotStep 
+                        text="Ative o modo foco aqui." 
+                        order={1} 
+                        name="focus_mode_on"
+                        active={tutorial === "focusMode"}
+                      >
+                        <WalkthroughableButton>
             <Pressable
               onPress={onToggleFocus}
               borderRadius="$full"
@@ -125,6 +143,8 @@ export default function AppHeader({
                 </Text>
               </HStack>
             </Pressable>
+            </WalkthroughableButton>
+            </CopilotStep>
           )}
 
           {/* Settings */}
