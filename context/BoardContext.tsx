@@ -1,4 +1,4 @@
-import type { Task } from "@/interfaces/task";
+import type { Task } from "@/interfaces/Task";
 import type { TaskList } from "@/interfaces/TaskList";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {

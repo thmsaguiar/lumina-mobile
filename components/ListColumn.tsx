@@ -23,7 +23,7 @@ import {
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import type { TaskList } from "@/interfaces/TaskList";
-import type { Task } from "@/interfaces/task";
+import type { Task } from "@/interfaces/Task";
 import { TaskCardInline } from "./TaskCardInline";
 import { useTypography } from "@hooks/useTypography";
 
