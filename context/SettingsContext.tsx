@@ -45,7 +45,7 @@ const defaultSettings: Settings = {
   visual: {
     fontSize: "medium",
     darkMode: false,
-    guidedSteps: false,
+    guidedSteps: true,
     highContrast: false,
   },
   productivity: {
